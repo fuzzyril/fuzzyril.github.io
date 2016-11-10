@@ -1,0 +1,579 @@
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=iso-8859-1">
+  <meta name="GENERATOR"
+ content="Mozilla/4.79 [en] (X11; U; SunOS 5.8 sun4u) [Netscape]">
+  <title>Second lecture on Fril/Prolog</title>
+</head>
+<body alink="#ff0000" bgcolor="#ffffff" link="#0000ee" text="#000000"
+ vlink="#551a8b">
+<center>
+<h1><b>Lecture 2</b></h1>
+</center>
+<center><i><font size="-1"><a href="Lecture2_small_print.html">small
+print version</a></font></i></center>
+<p><b>CLEAN</b> the knowledge base (useful but also dangerous if you do
+not understand how it works)
+</p>
+<p><b><font color="#3366ff"><font size="+1">((clean)(dict X)(kill
+X)(fail))</font></font></b>
+<br>
+<b><font color="#3366ff"><font size="+1">((clean))</font></font></b>
+</p>
+<p>&nbsp;yes
+</p>
+<p><b><font color="#ff0000">Fril&gt;?((list mother)(clean)(p "after
+cleaning")(list
+all))</font></b>
+</p>
+<p>((mother Jane Mary))
+<br>
+((mother Jane Trevor))
+<br>
+((mother Jane Ann))
+<br>
+((mother Julie Jane))
+<br>
+((mother Monique Tom))
+</p>
+<p>&nbsp;after cleaning
+</p>
+<p>yes /* <i>remember this is always printed by FRIL when the query
+succeeds</i>
+</p>
+<p><b><font color="#990000">DECLARATIVE vs PROCEDURAL meanings of a
+program</font></b>
+</p>
+<p>/* <i>((likes X Y)) if/when X likes Y; NOT symmetric </i>*/
+</p>
+<p>((likes John Jill))
+<br>
+((likes John Mary))
+<br>
+((likes Bob Jill))
+<br>
+((likes Bob Mary))
+<br>
+((likes George Jill))
+<br>
+((likes Jill George))
+</p>
+<p>/* <i>((friends X Y)) holds when X likes Y AND Y likes X </i>*/
+</p>
+<p><b><font color="#3366ff">((friends X Y) (likes X Y) (likes Y X))</font></b>
+</p>
+<p><b><font color="#ff0000">Fril&gt;qh ((friends X Y))</font></b>
+</p>
+<p>((friends George Jill))
+<br>
+((friends Jill George))
+</p>
+<p>&nbsp;no (more) solutions
+</p>
+<p>yes
+</p>
+<p>The comments definining the predicates above highlight the <b>DECLARATIVE
+</b>meaning
+of the prolog programs.
+</p>
+<p>The corresponding <b>PROCEDURAL</b> meaning would be something
+like:
+</p>
+<p>To solve/show that X and Y are frineds, FIRST solve/show that X
+likes
+Y and THEN solve/show that Y likes X;
+</p>
+<p>Evaluation in a prolog program is TOP-DOWN in the knowledge base,
+LEFT-RIGHT
+in a clause.
+</p>
+<p>The basic mechanism is that of pattern matching.
+</p>
+<p>More formally:
+</p>
+<blockquote><b><font color="#cc66cc">A goal G is true (satisfiable or
+logically
+follows from the program) if</font></b>
+  <br>
+&nbsp;
+  <blockquote><b><font color="#cc66cc">1. there is a clause C in the
+program
+such that</font></b>
+    <p><b><font color="#cc66cc">2. there is a clause instance I of C
+such that</font></b></p>
+  </blockquote>
+  <blockquote>
+    <blockquote><b><font color="#cc66cc">(a) the head of I is identical
+to
+G and</font></b>
+      <p><b><font color="#cc66cc">(b) all the goals in the body of I
+are true.</font></b></p>
+    </blockquote>
+  </blockquote>
+</blockquote>
+<p><br>
+Example: <b><a
+ href="http://www.ececs.uc.edu/%7Earalescu/323Fall2005/LECTURES/things.frl">things.frl</a></b>
+</p>
+<p>/* <i>bears are big </i>*/
+</p>
+<p><b><font color="#3366ff">((big X)(bear X)) /*1*/</font></b>
+</p>
+<p>/* <i>elephants are big </i>*/
+</p>
+<p><b><font color="#3333ff">((big X)(elephant X)) /*2*/</font></b>
+</p>
+<p>/* <i>cats are small </i>*/
+</p>
+<p><b><font color="#3366ff">((small X)(cat X)) /*3*/</font></b>
+</p>
+<p>/* <i>Teddy is a bear; Babar is an elephant; Fumiko is a cat </i>*/
+</p>
+<p><b><font color="#3366ff">((bear Teddy))&nbsp;&nbsp;&nbsp;&nbsp; /*4*/</font></b>
+<br>
+<b><font color="#3366ff">((elephant Babar))&nbsp;&nbsp;&nbsp;&nbsp;
+/*5*/</font></b>
+<br>
+<b><font color="#3366ff">((cat Fumiko))&nbsp;&nbsp;&nbsp;&nbsp; /*6*/</font></b>
+</p>
+<p>/* <i>Bears are brown, cats are black; elephants are gray </i>*/
+</p>
+<p><b><font color="#3366ff">((brown X)(bear X))&nbsp;&nbsp;&nbsp;&nbsp;
+/*7*/</font></b>
+<br>
+<b><font color="#3366ff">((black X )(cat X))&nbsp;&nbsp;&nbsp;&nbsp;
+/*8*/</font></b>
+<br>
+<b><font color="#3366ff">((gray X) (elephant X)&nbsp;&nbsp;&nbsp;&nbsp;
+/*9*/</font></b>
+</p>
+<p>/* <i>Black or brown things are dark </i>*/
+</p>
+<p><b><font color="#3366ff">((dark X )(brown
+X))&nbsp;&nbsp;&nbsp;&nbsp;
+/*10*/</font></b>
+<br>
+<b><font color="#3366ff">((dark X)(black X))&nbsp;&nbsp;&nbsp;&nbsp;
+/*11*/</font></b>
+</p>
+<p>yes
+</p>
+<p>What kind of queries can we ask? MANY different kinds!
+</p>
+<p><b>"who is dark and big?"</b>
+</p>
+<p>Fril&gt;<b> qh((dark X)(big X))</b>
+</p>
+<p>((dark Teddy) (big Teddy))
+</p>
+<p>&nbsp;no (more) solutions
+</p>
+<p>See how this is obtained
+</p>
+<p><b>&gt;tq((dark X)(big X))</b>
+</p>
+<p>Starting Fril Trace - header gives (Clause-name Index
+Nth-goal-in-body
+Depth)
+</p>
+<p>(top-level * 1 0) ****** (dark _3) trace ?y
+<br>
+(dark 1 1 1) ****** (brown _3) trace ?y
+<br>
+(brown 1 1 2) ****** (bear _3) trace ?y
+<br>
+(brown 1 1 2) SOLVED (bear Teddy)
+<br>
+(dark 1 1 1) SOLVED (brown Teddy)
+<br>
+(top-level * 1 0) SOLVED (dark Teddy)
+<br>
+(top-level * 2 0) ****** (big Teddy) trace ?y
+<br>
+(big 1 1 1) ****** (bear Teddy) trace ?y
+<br>
+(big 1 1 1) SOLVED (bear Teddy)
+<br>
+(top-level * 2 0) SOLVED (big Teddy)
+</p>
+<p>try to obtain more solutions:
+</p>
+<p>Fril&gt;<b> tq((dark X)(big X)(fail))</b>
+</p>
+<p>Starting Fril Trace - header gives (Clause-name Index
+Nth-goal-in-body
+Depth)
+</p>
+<p>(top-level * 1 0) ****** (dark _3) trace ?n
+<br>
+(top-level * 1 0) SOLVED (dark Teddy)
+<br>
+(top-level * 2 0) ****** (big Teddy) trace ?n
+<br>
+(top-level * 2 0) SOLVED (big Teddy)
+<br>
+(top-level * 3 0) ****** (fail)
+<br>
+(top-level * 3 0) FAILED (fail)
+<br>
+(top-level * 2 0) FAILED (big Teddy)
+<br>
+(top-level * 1 0) SOLVED (dark Fumiko)
+<br>
+(top-level * 2 0) ****** (big Fumiko) trace ?y
+<br>
+(big 1 1 1) ****** (bear Fumiko) trace ?y
+<br>
+(big 1 1 1) FAILED (bear Fumiko) - unification failed
+<br>
+(big 2 1 1) ****** (elephant Fumiko) trace ?y
+<br>
+(big 2 1 1) FAILED (elephant Fumiko) - unification failed
+<br>
+(top-level * 2 0) FAILED (big Fumiko) - try again: n(default), y or
+q ?y
+<br>
+(top-level * 2 0) ****** (big Fumiko) trace ?y
+<br>
+(big 1 1 1) ****** (bear Fumiko) trace ?y
+<br>
+(big 1 1 1) FAILED (bear Fumiko) - unification failed
+<br>
+(big 2 1 1) ****** (elephant Fumiko) trace ?n
+<br>
+(big 2 1 1) FAILED (elephant Fumiko) - unification failed
+<br>
+(top-level * 2 0) FAILED (big Fumiko) - try again: n(default), y or
+q ?b
+</p>
+<p>Retry goal prompt : valid options are n (or&nbsp;<hit return="">), y
+or
+q : q
+<br>
+&nbsp;
+</hit></p>
+<p>Another version of the same example (<b><a
+ href="http://www.ececs.uc.edu/%7Earalescu/323_602/LECTURES/things2.frl">things2.frl</a></b>):
+<br>
+<b><font color="#990000">((big bear))</font></b>
+<br>
+<b><font color="#990000">((big elephant))</font></b>
+<br>
+<b><font color="#990000">((small cat))</font></b><b><font
+ color="#990000"></font></b>
+</p>
+<p><b><font color="#990000">((brown bear))</font></b>
+<br>
+<b><font color="#990000">((black cat))</font></b>
+<br>
+<b><font color="#990000">((gray elephant))</font></b><b><font
+ color="#990000"></font></b>
+</p>
+<p><b><font color="#990000">((dark X)(black X))</font></b>
+<br>
+<b><font color="#990000">((dark X)(brown X))</font></b>
+<br>
+<b></b>&nbsp;<b></b>
+</p>
+<p><b>ORDER of clauses is very important!!!!</b>
+<br>
+<b>It always affects the order in which multiple solutions are found;</b>
+<br>
+<b>Sometimes it can lead to wrong answers. This is a non-logical
+feature
+Fril/prolog.</b>
+</p>
+<p>The file <a
+ href="http://www.ececs.uc.edu/%7Earalescu/323Fall2005/LECTURES/predecessor.frl">predecessor</a>
+includes family_relations as well in which parent has been defined:
+</p>
+<p>/* <i>((mother X Y)) holds if/when X is mother of Y </i>*/
+<br>
+<b><font color="#3366ff">((mother Jane Mary))</font></b>
+<br>
+<b><font color="#3366ff">((mother Jane Bill))</font></b>
+<br>
+<b><font color="#3366ff">((mother Jane Trevor))</font></b>
+<br>
+<b><font color="#3366ff">((mother Jane Ann))</font></b>
+<br>
+<b><font color="#3366ff">((mother Julie Jane))</font></b>
+<br>
+<b><font color="#3366ff">((mother Monique Tom))</font></b>
+</p>
+<p>/* <i>((father X Y)) holds if/when X is the father of Y </i>*/
+<br>
+<b><font color="#3366ff">((father Tom Mary))</font></b>
+<br>
+<b><font color="#3366ff">((father Tom Bill))</font></b>
+<br>
+<b><font color="#3366ff">((father Tom Trevor))</font></b>
+<br>
+<b><font color="#3366ff">((father Tom Ann))</font></b>
+</p>
+<p>/* <i>((parents X M F)) holds is/when M is the mother and F is the
+father
+of X </i>*/
+<br>
+<b><font color="#3366ff">((parents Monique Silvia Bill))</font></b>
+<br>
+<b><font color="#3366ff">((parents X M F)</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp; (mother M X)</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp; (father F X))</font></b>
+</p>
+<p>/* <i>((siblings X Y)) holds if X and Y have the same parents </i>*/
+<br>
+<b><font color="#3366ff">((siblings X Y)</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp; (parents X M F)</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp; (parents Y M F)</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp; (negg eq X Y))</font></b>
+<br>
+&nbsp;
+</p>
+<p>/* <i>((siblings2 X Y)) holds if X and Y have the same parents:
+another
+definition </i>*/
+<br>
+<b><font color="#3366ff">((siblings2 X X)</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp; (!)</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp; (fail))</font></b>
+<br>
+<b><font color="#3366ff">((siblings2 X Y)</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp; (parents X M F)</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp; (parents Y M F))</font></b>
+</p>
+<p>/* <i>((grandmother G X)) holds if G is maternal grandmother:
+mother
+of mother</i>
+<br>
+<i>&nbsp;&nbsp;&nbsp; of X; of paternal grandmother: mother of father
+of X </i>*/
+</p>
+<p><b><font color="#3366ff">((grandmother G X)</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp; (mother G Y )</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp; (mother Y X))</font></b>
+<br>
+<b><font color="#3366ff">((grandmother G X)</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp; (mother G Y)</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp; (father Y X))</font></b>
+</p>
+<p>/* <i>((grandmother2 G X)) same as grandmother but using parents
+predicate
+</i>*/
+<br>
+<b><font color="#cc0000">((grandmother2 G X)</font></b>
+<br>
+<b><font color="#cc0000">&nbsp;&nbsp;&nbsp; (parents X M _)</font></b>
+<br>
+<b><font color="#cc0000">&nbsp;&nbsp;&nbsp; (mother G M))</font></b>
+<br>
+<b><font color="#cc0000">((grandmother2 G X)</font></b>
+<br>
+<b><font color="#cc0000">&nbsp;&nbsp;&nbsp; (parents X _ F)</font></b>
+<br>
+<b><font color="#cc0000">&nbsp;&nbsp;&nbsp; (mother G F))</font></b>
+</p>
+<p>/* <i>((ancestor A X)) holds if A is an ancestor of X, that is a
+parent&nbsp;
+or an ancestor of a parent. </i>*/
+<br>
+<b><font color="#3366ff">((parent X Y) (mother X Y))</font></b>
+<br>
+<b><font color="#3366ff">((parent X Y)(father X Y))</font></b>
+</p>
+<p>/* <i>ancestor : four different versions </i>*/
+<br>
+<b><font color="#3333ff">((ancestor X Z) (parent X Z))</font></b>
+<br>
+<b><font color="#3333ff">((ancestor X Z) (parent X Y) (ancestor Y Z))</font></b>
+</p>
+<p>/* <i>variations on this program : </i>*/
+</p>
+<p><b>/* <i>1: swap the the order of clauses</i> */</b>
+<br>
+<b><font color="#3366ff">((ancest1 X Y) (parent X Z ) (ancest1 Z Y))</font></b>
+<br>
+<b><font color="#3366ff">((ancest1 X Y) (parent X Y))</font></b>
+<br>
+&nbsp;
+</p>
+<p><b>/* <i>2: swap goals inthe second clause of the original </i>*/</b>
+<br>
+<b><font color="#3366ff">((ancest2 X Z) (parent X Z))</font></b>
+<br>
+<b><font color="#3366ff">((ancest2 X Z) (ancest2 Y Z) (parent X Y))</font></b>
+<br>
+&nbsp;
+</p>
+<p><b>/* <i>3: swap goals and clauses in the original </i>*/</b>
+<br>
+<b><font color="#3366ff">((ancest3 X Z) (ancest3 Y Z) (parent X Y))</font></b>
+<br>
+<b><font color="#3366ff">((ancest3 X Z) (parent X Z))</font></b>
+</p>
+<p>&nbsp;yes
+</p>
+<p>Now the queries:
+</p>
+<p><b>Fril&gt;sh "emacs <a href="predecessor.frl">predecessor.frl</a>"
+yes</b>
+</p>
+<p><b>Fril&gt;reload "predecessor.frl" yes</b>
+</p>
+<p><b>Fril&gt;qh((ancestor X Y))</b>
+</p>
+<p>((ancestor Jane Mary))
+<br>
+((ancestor Jane Bill))
+<br>
+((ancestor Jane Trevor))
+<br>
+((ancestor Jane Ann))
+<br>
+((ancestor Julie Jane))
+<br>
+((ancestor Monique Tom))
+<br>
+((ancestor Tom Mary))
+<br>
+((ancestor Tom Bill))
+<br>
+((ancestor Tom Trevor))
+<br>
+((ancestor Tom Ann))
+<br>
+((ancestor Julie Mary))
+<br>
+((ancestor Julie Bill))
+<br>
+((ancestor Julie Trevor))
+<br>
+((ancestor Julie Ann))
+<br>
+((ancestor Monique Mary))
+<br>
+((ancestor Monique Bill))
+<br>
+((ancestor Monique Trevor))
+<br>
+((ancestor Monique Ann))
+</p>
+<p>&nbsp;no (more) solutions
+</p>
+<p>yes
+</p>
+<p><b>Fril&gt;qh((ancest1 X Y))</b>
+</p>
+<p>((ancest1 Julie Mary))
+<br>
+((ancest1 Julie Bill))
+<br>
+((ancest1 Julie Trevor))
+<br>
+((ancest1 Julie Ann))
+<br>
+((ancest1 Monique Mary))
+<br>
+((ancest1 Monique Bill))
+<br>
+((ancest1 Monique Trevor))
+<br>
+((ancest1 Monique Ann))
+<br>
+((ancest1 Jane Mary))
+<br>
+((ancest1 Jane Bill))
+<br>
+((ancest1 Jane Trevor))
+<br>
+((ancest1 Jane Ann))
+<br>
+((ancest1 Julie Jane))
+<br>
+((ancest1 Monique Tom))
+<br>
+((ancest1 Tom Mary))
+<br>
+((ancest1 Tom Bill))
+<br>
+((ancest1 Tom Trevor))
+<br>
+((ancest1 Tom Ann))
+</p>
+<p>&nbsp;no (more) solutions
+</p>
+<p>yes
+</p>
+<p><b>Fril&gt;qh((ancest2 X Y))</b>
+</p>
+<p>((ancest2 Jane Mary))
+<br>
+((ancest2 Jane Bill))
+<br>
+((ancest2 Jane Trevor))
+<br>
+((ancest2 Jane Ann))
+<br>
+((ancest2 Julie Jane))
+<br>
+((ancest2 Monique Tom))
+<br>
+((ancest2 Tom Mary))
+<br>
+((ancest2 Tom Bill))
+<br>
+((ancest2 Tom Trevor))
+<br>
+((ancest2 Tom Ann))
+<br>
+((ancest2 Julie Mary))
+<br>
+((ancest2 Julie Bill))
+<br>
+((ancest2 Julie Trevor))
+<br>
+((ancest2 Julie Ann))
+<br>
+((ancest2 Monique Mary))
+<br>
+((ancest2 Monique Bill))
+<br>
+((ancest2 Monique Trevor))
+<br>
+((ancest2 Monique Ann))
+</p>
+<p>&nbsp;^C<break><b><i>system reset</i></b>
+</break></p>
+<p><b>Fril&gt; qh((ancest3 X Y))</b>
+</p>
+<p>^C<break><b><i>system reset</i></b>
+</break></p>
+<p><b>Fril&gt;?((ancest1 Jane Mary))</b>
+</p>
+<p>yes
+</p>
+<p><b>Fril&gt;?((ancest2 Jane Mary))</b>
+</p>
+<p>yes
+</p>
+<p><b>Fril&gt;?((ancest3 Jane Mary))</b>
+</p>
+<p>^C<break><b><i>system reset</i></b>
+</break></p>
+</body>
+</html>

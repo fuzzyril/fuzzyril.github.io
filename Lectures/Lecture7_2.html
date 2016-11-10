@@ -1,0 +1,1836 @@
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=iso-8859-1">
+  <meta name="GENERATOR"
+ content="Mozilla/4.79 [en] (X11; U; SunOS 5.8 sun4u) [Netscape]">
+</head>
+<body alink="#ff0000" bgcolor="#ffffff" link="#0000ee" text="#000000"
+ vlink="#551a8b">
+<center><b><font color="#3333ff">Search algorithms</font></b>
+<br>
+<b><font color="#3333ff">(continued 2)</font></b></center>
+<p>In the following we will consider a&nbsp; small <a
+ href="http://www.ececs.uc.edu/%7Earalescu/AI_I/LECTURES/graph_example.jpg">example</a>
+described by the connect and path predicates below:
+</p>
+<p><b><font color="#3333ff">((connect a b))</font></b>
+<br>
+<b><font color="#3333ff">((connect a d))</font></b>
+<br>
+<b><font color="#3333ff">((connect a f))</font></b>
+</p>
+<p><b><font color="#3333ff">((connect b c))</font></b>
+<br>
+<b><font color="#3333ff">((connect b f))</font></b>
+</p>
+<p><b><font color="#3333ff">((connect d e))</font></b>
+<br>
+<b><font color="#3333ff">((connect f e))</font></b>
+</p>
+<p><b><font color="#3333ff">((connect c e))</font></b>
+</p>
+<p><b><font color="#993399">((path X Y)(connect X Y))</font></b>
+<br>
+<b><font color="#993399">((path X Y)(connect Y X))<br>
+<img alt="graph example" src="graph_example.jpg"
+ style="width: 228px; height: 221px;"><br>
+</font></b></p>
+<p><b>Implementing the breadth first search:</b>
+</p>
+<p><b>We implement the breadth first search according to the above
+strategy
+of generating all possible path by one step extension and then ordering
+these paths in order to expand the next one, etc.</b>
+</p>
+<p><b>/* (breadthF PATHS SOL) holds if SOL is the path from the start
+to
+the goal node when the current candidate path from the collection of
+paths
+PATH has been expanded.</b>
+<br>
+<b>Initially PATHS contains only one path candidate, the list with
+only one node, the START node.</b>
+</p>
+<p><b>This means that the top level call to breadthF is</b>
+</p>
+<p><b><font color="#cc6600">?((breadthF ((START)) SOL))</font></b>
+</p>
+<p><b>*/</b>
+</p>
+<p><b>The main clause for breadthF will then do the following:</b>
+</p>
+<ul>
+  <li> <b>generate all expansions&nbsp; by one step of the current
+path,
+that
+is,&nbsp; the head of the list PATHS.</b></li>
+  <li> <b>add the result (a list of partial paths) at the end of PATHS.</b></li>
+  <li> <b>invoke breadthF on the new PATHS to obtain the solution.</b></li>
+</ul>
+<b>Therefore we have the following definition</b>
+<p><b><font color="#3333ff">((breadthF (PAth | TPaths) SOL)</font></b>
+<br>
+<b><font color="#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(expand PAth&nbsp; NPaths)</font></b>
+<br>
+<b><font color="#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(append TPaths NPaths NEWPATHS)</font></b>
+<br>
+<b><font color="#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(breadthF NEWPATHS SOL))</font></b>
+<br>
+&nbsp;
+</p>
+<p><b>The&nbsp; stopping rule for this condition is then obtained when
+the current path to be expanded starts with the goal node, that is:</b>
+</p>
+<p><b><font color="#3333ff">((breadthF ((X |T) |&nbsp; PATHS) (X|T))</font></b>
+<br>
+<b><font color="#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(goal X))</font></b>
+</p>
+<p><b>The predicate expand is similar to solve_all_wfa from which we
+will
+remove the predicates operating on the knowledge base and replace go by
+path.&nbsp; That is, from the predicate</b>
+</p>
+<p><b><font color="#33cc00">((solve_all_wfa S G SOLUTIONS)</font></b>
+<br>
+<b><font color="#33cc00">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(kill goal)</font></b>
+<br>
+<b><font color="#33cc00">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(addcl ((goal G)) )</font></b>
+<br>
+<b><font color="#33cc00">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(findall P ((go S P (S))&nbsp; SOLUTIONS)</font></b>
+<br>
+<b><font color="#33cc00">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(delcl ((goal G)) ))</font></b>
+</p>
+<p><b>we will obtain:</b>
+</p>
+<p><b><font color="#3333ff">((expand (HPath|TPath) NPaths)</font></b>
+<br>
+<b><font color="#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(findall&nbsp; (NEXT HPath|TPath)</font></b>
+<br>
+<b><font color="#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+((path HPath NEXT)(negg member NEXT (HPath|TPath)))</font></b>
+<br>
+<b><font color="#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+NPaths</font></b>
+<br>
+<b><font color="#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+)</font></b>
+<br>
+<b><font color="#3333ff">)</font></b>
+</p>
+<p><b><font color="#000000">We next wrap this in a top level
+predicate&nbsp;
+solve_BF as follows:</font></b>
+</p>
+<p><b><font color="#3333ff">((solve_BF S&nbsp; G SOL)</font></b>
+<br>
+<b><font color="#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(kill goal)</font></b>
+<br>
+<b><font color="#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(addcl ((goal G)))</font></b>
+<br>
+<b><font color="#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(breadthF ((S)) S1)</font></b>
+<br>
+<b><font color="#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(reverse S1 SOL)</font></b>
+<br>
+<b><font color="#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(pretty_print_solution SOL)</font></b>
+<br>
+<b><font color="#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(delcl&nbsp; ((goal G))&nbsp; ))</font></b>
+<br>
+&nbsp;
+</p>
+<p><b><font color="#000000">Note that breadth first builds the path in
+reverse order, and therefore I used reverse to output the path in
+direct
+order, from the start to the goal.</font></b>
+<br>
+&nbsp;
+</p>
+<p><b><font color="#000000">Example of tracing a query for the small
+example:</font></b>
+</p>
+<p><b><font color="#000000">Fril &gt;reload <span
+ style="text-decoration: underline;"><a href="breadth_first.frl">breadth_first.frl</a><br>
+<br>
+</span><a href="breadth_first.frl"></a></font></b></p>
+<p><b><font color="#000000">yes</font></b>
+<br>
+<b><font color="#cc0000">Fril &gt;?((solve_BF a e S))</font></b>
+<br>
+<b><font color="#000000">a -&gt;</font></b>
+<br>
+<b><font color="#000000">d -&gt;</font></b>
+<br>
+<b><font color="#000000">e&nbsp; success</font></b>
+<br>
+<b><font color="#000000">yes</font></b>
+</p>
+<p><b><font color="#cc0000">Fril &gt;tq((solve_BF a e S))</font></b>
+</p>
+<p><b><font color="#000000">Starting Fril Trace - header gives
+(Clause-name
+Index Nth-goal-in-body Depth)</font></b>
+</p>
+<p><b><font color="#000000">(top-level * 1 0) ****** </font><font
+ color="#cc0000">(solve_BF
+a e _3) trace ?y&nbsp;&nbsp; </font><i><font color="#993399">% top
+query</font></i></b>
+<br>
+<b><font color="#000000">(solve_BF 1 1 1) ****** (kill goal)</font></b>
+<br>
+<b><font color="#000000">(solve_BF 1 1 1) SOLVED (kill goal)</font></b>
+<br>
+<b><font color="#000000">(solve_BF 1 2 1) ****** (addcl ((goal e)))</font></b>
+<br>
+<b><font color="#000000">(solve_BF 1 2 1) SOLVED (addcl ((goal e)))</font></b>
+<br>
+<b><font color="#000000">(solve_BF 1 3 1) ****** </font><font
+ color="#cc0000">(breadthF
+((a)) _114) trace ?y</font><font color="#000000">&nbsp;&nbsp; </font><i><font
+ color="#cc33cc">%
+first call to breadthF</font></i></b>
+<br>
+<b><font color="#000000">(breadthF 1 1 2) ****** (goal a) trace ?y</font></b>
+<br>
+<b><font color="#000000">(breadthF 1 1 2) FAILED (goal a) - unification
+failed</font></b>
+</p>
+<p><b><font color="#000000">(breadthF 2 1 2) ******</font><font
+ color="#3333ff">
+(expand (a) _36f) trace ?y&nbsp;&nbsp;&nbsp;</font><i><font
+ color="#cc33cc">
+% first expand</font></i></b>
+<br>
+<b><font color="#000000">(expand 1 1 3) ****** (findall (_455 a) ((path
+a _455) (negg member _455 (a))) _36f) trace ?y</font></b>
+<br>
+<b><font color="#000000">&nbsp;&nbsp;&nbsp; **</font><font
+ color="#ffcccc">
+finding all (_455 a) such that ((path a _455) (negg member _455 (a))) **</font></b>
+<br>
+<b><font color="#ffcccc">(findall * 1 4) ****** (path a _455) trace
+?y</font></b>
+<br>
+<b><font color="#ffcccc">(path 1 1 5) ****** (connect a _455) trace
+?y</font></b>
+<br>
+<b><font color="#ffcccc">(path 1 1 5) SOLVED (connect a b)</font></b>
+<br>
+<b><font color="#ffcccc">(findall * 1 4) SOLVED (path a b)</font></b>
+<br>
+<b><font color="#ffcccc">(findall * 2 4) ****** (negg member b (a))
+trace ?y</font></b>
+<br>
+<b><font color="#ffcccc">&nbsp;&nbsp;&nbsp; ** unnegated **</font></b>
+<br>
+<b><font color="#ffcccc">(negg * 1 5) ****** (member b (a)) trace ?y</font></b>
+<br>
+<b><font color="#ffcccc">(member 2 1 6) ****** (member b ()) trace
+?y</font></b>
+<br>
+<b><font color="#ffcccc">(member 2 1 6) FAILED (member b ()) -
+unification
+failed</font></b>
+<br>
+<b><font color="#ffcccc">(negg * 1 5) FAILED (member b (a)) - try
+again:
+n(default), y or q ?n</font></b>
+<br>
+<b><font color="#ffcccc">&nbsp;&nbsp;&nbsp; ** unnegated FAILED so
+:</font></b>
+<br>
+<b><font color="#ffcccc">(findall * 2 4) SOLVED (negg member b (a))</font></b>
+<br>
+<b><font color="#ffcccc">&nbsp;&nbsp;&nbsp; ** solution (b a) found
+**</font></b>
+<br>
+<b><font color="#ffcccc">(findall * 2 4) FAILED (negg member b (a))</font></b>
+<br>
+<b><font color="#ffcccc">(path 1 1 5) SOLVED (connect a d)</font></b>
+<br>
+<b><font color="#ffcccc">(findall * 1 4) SOLVED (path a d)</font></b>
+<br>
+<b><font color="#ffcccc">(findall * 2 4) ****** (negg member d (a))
+trace ?y</font></b>
+<br>
+<b><font color="#ffcccc">&nbsp;&nbsp;&nbsp; ** unnegated **</font></b>
+<br>
+<b><font color="#ffcccc">(negg * 1 5) ****** (member d (a)) trace ?y</font></b>
+<br>
+<b><font color="#ffcccc">(member 2 1 6) ****** (member d ()) trace
+?y</font></b>
+<br>
+<b><font color="#ffcccc">(member 2 1 6) FAILED (member d ()) -
+unification
+failed</font></b>
+<br>
+<b><font color="#ffcccc">(negg * 1 5) FAILED (member d (a)) - try
+again:
+n(default), y or q ?n</font></b>
+<br>
+<b><font color="#ffcccc">&nbsp;&nbsp;&nbsp; ** unnegated FAILED so
+:</font></b>
+<br>
+<b><font color="#ffcccc">(findall * 2 4) SOLVED (negg member d (a))</font></b>
+<br>
+<b><font color="#ffcccc">&nbsp;&nbsp;&nbsp; ** solution (d a) found
+**</font></b>
+<br>
+<b><font color="#ffcccc">(findall * 2 4) FAILED (negg member d (a))</font></b>
+<br>
+<b><font color="#ffcccc">(path 1 1 5) SOLVED (connect a f)</font></b>
+<br>
+<b><font color="#ffcccc">(findall * 1 4) SOLVED (path a f)</font></b>
+<br>
+<b><font color="#ffcccc">(findall * 2 4) ****** (negg member f (a))
+trace ?y</font></b>
+<br>
+<b><font color="#ffcccc">&nbsp;&nbsp;&nbsp; ** unnegated **</font></b>
+<br>
+<b><font color="#ffcccc">(negg * 1 5) ****** (member f (a)) trace ?y</font></b>
+<br>
+<b><font color="#ffcccc">(member 2 1 6) ****** (member f ()) trace
+?y</font></b>
+<br>
+<b><font color="#ffcccc">(member 2 1 6) FAILED (member f ()) -
+unification
+failed</font></b>
+<br>
+<b><font color="#ffcccc">(negg * 1 5) FAILED (member f (a)) - try
+again:
+n(default), y or q ?n</font></b>
+<br>
+<b><font color="#ffcccc">&nbsp;&nbsp;&nbsp; ** unnegated FAILED so
+:</font></b>
+<br>
+<b><font color="#ffcccc">(findall * 2 4) SOLVED (negg member f (a))</font></b>
+<br>
+<b><font color="#ffcccc">&nbsp;&nbsp;&nbsp; ** solution (f a) found
+**</font></b>
+<br>
+<b><font color="#ffcccc">(findall * 2 4) FAILED (negg member f (a))</font></b>
+<br>
+<b><font color="#ffcccc">(path 1 1 5) FAILED (connect a _455)</font></b>
+<br>
+<b><font color="#ffcccc">(path 2 1 5) ****** (connect _455 a) trace
+?y</font></b>
+<br>
+<b><font color="#ffcccc">(path 2 1 5) FAILED (connect _455 a) -
+unification
+failed</font></b>
+<br>
+<b><font color="#ffcccc">(findall * 1 4) FAILED (path a _455)</font></b>
+<br>
+<b><font color="#ffcccc">&nbsp;&nbsp;&nbsp; ** no more solutions for
+findall **</font></b>
+<br>
+<b><font color="#000000">(expand 1 1 3) SOLVED (findall (_455 a)</font></b>
+<br>
+<b><font color="#000000">&nbsp;&nbsp; ((path a _455) (negg member _455
+(a))) </font><font color="#3366ff">((b a) (d a) (f a)))&nbsp;&nbsp; </font><i><font
+ color="#cc33cc">%
+partial paths originating in a</font></i></b>
+<br>
+<b><font color="#cc0000">(breadthF 2 1 2) SOLVED (expand (a) ((b a)
+(d a) (f a)))&nbsp;&nbsp;</font><i><font color="#cc33cc"> % second call
+to breadthF</font></i></b>
+<br>
+<b><font color="#000000">(breadthF 2 2 2) ****** (append () ((b a)
+(d a) (f a)) _370) trace ?n</font></b>
+<br>
+<b><font color="#000000">(breadthF 2 2 2) SOLVED (append () ((b a)
+(d a) (f a)) ((b a) (d a) (f a)))</font></b>
+<br>
+<b><font color="#000000">(breadthF 2 3 2) ****** (breadthF ((b a) (d
+a) (f a)) _114) trace ?y</font></b>
+<br>
+<b><font color="#000000">(breadthF 1 1 3) ****** (goal b) trace ?y</font></b>
+<br>
+<b><font color="#000000">(breadthF 1 1 3) FAILED (goal b) - unification
+failed</font></b>
+<br>
+<b><font color="#000000">(breadthF 2 1 3) ****** (expand (b a) _901)
+trace ?y</font></b>
+<br>
+<b><font color="#000000">(expand 1 1 4) ****** (findall (_9e7 b a)
+((path b _9e7) (negg member _9e7 (b a))) _901) trace ?n</font></b>
+</p>
+<p><b><font color="#000000">......</font></b>
+</p>
+<p><b><font color="#000000">(expand 1 1 4) SOLVED (findall (_9e7 b a)</font></b>
+<br>
+<b><font color="#000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+((path b _9e7) (negg member _9e7 (b a))) </font><font color="#3333ff">((c
+b a) (f b a))</font><font color="#000000">)&nbsp; </font><i><font
+ color="#cc33cc">%
+partial paths orginating in a</font></i></b>
+<br>
+<b><font color="#000000">(breadthF 2 1 3) SOLVED</font><font
+ color="#cc0000">
+(expand (b a) ((c b a) (f b a)))</font><font color="#000000">&nbsp; </font><i><font
+ color="#cc33cc">%
+solution to expand</font></i></b>
+<br>
+<b><font color="#000000">(breadthF 2 2 3) ****** (append ((d a) (f
+a)) ((c b a) (f b a)) _902) trace ?n</font></b>
+<br>
+<b><font color="#000000">(breadthF 2 2 3) SOLVED (append ((d a) (f
+a)) ((c b a) (f b a)) ((d a) (f a) (c b a) (f b a)))</font></b>
+<br>
+<b><font color="#000000">(breadthF 2 3 3) ****** </font><font
+ color="#cc0000">(breadthF
+((d a) (f a) (c b a) (f b a)) _114) trace ?y </font><i><font
+ color="#cc33cc">%
+3rd call to breadthF</font></i></b>
+<br>
+<b><font color="#000000">(breadthF 1 1 4) ****** (goal d) trace ?n</font></b>
+<br>
+<b><font color="#000000">(breadthF 1 1 4) FAILED (goal d) - unification
+failed</font></b>
+<br>
+<b><font color="#000000">(breadthF 2 1 4) ****** (expand (d a) _e97)
+trace ?n</font></b>
+</p>
+<p><b><font color="#000000">.....</font></b>
+</p>
+<p><b><font color="#000000">(expand 1 1 5) ****** (findall (_f7d d a)
+((path
+d _f7d) (negg member _f7d (d a))) _e97) trace ?n</font></b>
+<br>
+<b><font color="#000000">(expand 1 1 5) SOLVED (findall (_f7d d a)
+((path d _f7d) (negg member _f7d (d a))) </font><font color="#3333ff">((e
+d a))</font><font color="#000000">)</font></b>
+<br>
+<b><font color="#000000">(breadthF 2 1 4) SOLVED (expand (d a) ((e
+d a)))</font></b>
+<br>
+<b><font color="#000000">(breadthF 2 2 4) ****** (append ((f a) (c
+b a) (f b a)) ((e d a)) _e98) trace ?n</font></b>
+<br>
+<b><font color="#000000">(breadthF 2 2 4) SOLVED (append ((f a) (c
+b a) (f b a)) ((e d a)) ((f a) (c b a) (f b a) (e d a)))</font></b>
+<br>
+<b><font color="#000000">(breadthF 2 3 4) ****** (breadthF (</font><font
+ color="#3333ff">(f
+a)</font><font color="#000000"> (c b a) (f b a) (e d a)) _114) trace ?y</font></b>
+</p>
+<p><b><font color="#000000">.......</font></b>
+</p>
+<p><b><font color="#000000">(breadthF 2 3 5) ****** (breadthF (</font><font
+ color="#009900">(c
+b a)</font><font color="#000000"> (f b a) (e d a) (e f a) </font><font
+ color="#3333ff">(b
+f a)</font><font color="#000000">) _114) trace ?y</font></b>
+</p>
+<p><b><font color="#000000">.......</font></b>
+<br>
+<b><font color="#000000">(breadthF 2 3 6) ****** (breadthF (</font><font
+ color="#3333ff">(f
+b a)</font><font color="#000000"> (e d a) (e f a) (b f a) </font><font
+ color="#009900">(e
+c b a)</font><font color="#000000">) _114) trace ?y</font></b>
+</p>
+<p><b><font color="#000000">......</font></b>
+</p>
+<p><b><font color="#000000">(breadthF 2 3 7) ****** (breadthF ((</font><font
+ color="#009900">e
+d a</font><font color="#000000">) (e f a) (b f a) (e c b a) </font><font
+ color="#3333ff">(e
+f b a)</font><font color="#000000">) _114) trace ?y</font></b>
+<br>
+<b><font color="#000000">(breadthF 1 1 8) ****** (goal e) trace ?n</font></b>
+<br>
+<b><font color="#000000">(breadthF 1 1 8) SOLVED (goal e)</font></b>
+<br>
+<b><font color="#000000">(breadthF 2 3 7) SOLVED (breadthF ((e d a)
+(e f a) (b f a) (e c b a) (e f b a)) (e d a))</font></b>
+<br>
+<b><font color="#000000">(breadthF 2 3 6) SOLVED (breadthF ((f b a)
+(e d a) (e f a) (b f a) (e c b a)) (e d a))</font></b>
+<br>
+<b><font color="#000000">(breadthF 2 3 5) SOLVED (breadthF ((c b a)
+(f b a) (e d a) (e f a) (b f a)) (e d a))</font></b>
+<br>
+<b><font color="#000000">(breadthF 2 3 4) SOLVED (breadthF ((f a) (c
+b a) (f b a) (e d a)) (e d a))</font></b>
+<br>
+<b><font color="#000000">(breadthF 2 3 3) SOLVED (breadthF ((d a) (f
+a) (c b a) (f b a)) (e d a))</font></b>
+<br>
+<b><font color="#000000">(breadthF 2 3 2) SOLVED (breadthF ((b a) (d
+a) (f a)) (e d a))</font></b>
+<br>
+<b><font color="#000000">(solve_BF 1 3 1) SOLVED (breadthF ((a)) (e
+d a))</font></b>
+<br>
+<b><font color="#000000">(solve_BF 1 4 1) ****** (reverse (e d a) _3)
+trace ?n</font></b>
+<br>
+<b><font color="#000000">(solve_BF 1 4 1) SOLVED (reverse (e d a) (a
+d e))</font></b>
+<br>
+<b><font color="#000000">(solve_BF 1 5 1) ****** (pretty_print_solution
+(a d e)) trace ?n</font></b>
+<br>
+<b><font color="#3366ff">a -&gt;</font></b>
+<br>
+<b><font color="#3366ff">d -&gt;</font></b>
+<br>
+<b><font color="#3366ff">e&nbsp; success</font></b>
+</p>
+<p><b><font color="#000000">(solve_BF 1 5 1) SOLVED
+(pretty_print_solution
+(a d e))</font></b>
+<br>
+<b><font color="#000000">(solve_BF 1 6 1) ****** (delcl ((goal e)))</font></b>
+<br>
+<b><font color="#000000">(solve_BF 1 6 1) SOLVED (delcl ((goal e)))</font></b>
+<br>
+<b><font color="#000000">(top-level * 1 0) SOLVED (solve_BF a e (a
+d e))</font></b>
+</p>
+<p><b><font color="#000000">yes</font></b>
+<br>
+&nbsp;
+</p>
+<p><b><font color="#993399">Example trace of a query for the river
+problem:</font></b>
+</p>
+<p><b><font color="#000000">Fril &gt;tq((solve_BF (n n n n) (s s s s)
+S))</font></b>
+</p>
+<p><b><font color="#000000">Starting Fril Trace - header gives
+(Clause-name
+Index Nth-goal-in-body Depth)</font></b>
+</p>
+<p><b><font color="#000000">(top-level * 1 0) ****** (</font><font
+ color="#cc0000">solve_BF
+(n n n n) (s s s s) _d) trace ?y</font></b>
+<br>
+<b><font color="#000000">(solve_BF 1 1 1) ****** (kill goal)</font></b>
+<br>
+<b><font color="#000000">(solve_BF 1 1 1) SOLVED (kill goal)</font></b>
+<br>
+<b><font color="#000000">(solve_BF 1 2 1) ****** (addcl ((goal (s s
+s s))))</font></b>
+<br>
+<b><font color="#000000">(solve_BF 1 2 1) SOLVED (addcl ((goal (s s
+s s))))</font></b>
+<br>
+<b><font color="#000000">(solve_BF 1 3 1) ****** (breadthF (((n n n
+n))) _11e) trace ?y</font></b>
+<br>
+<b><font color="#cccccc">(breadthF 1 1 2) ****** (goal (n n n n)) trace
+?n</font></b>
+<br>
+<b><font color="#cccccc">(breadthF 1 1 2) FAILED (goal (n n n n)) -
+unification failed</font></b>
+<br>
+<b><font color="#cccccc">(breadthF 2 1 2) ****** (expand ((n n n n))
+_379) trace ?y</font></b>
+<br>
+<b><font color="#cccccc">(expand 1 1 3) ****** (findall (_45f (n n
+n n)) ((path (n n n n) _45f) (negg member _45f ((n n n n)))) _379)
+trace
+?y</font></b>
+<br>
+<b><font color="#cccccc">&nbsp;&nbsp;&nbsp; ** finding all (_45f (n
+n n n)) such that ((path (n n n n) _45f) (negg member _45f ((n n n
+n))))
+**</font></b>
+<br>
+<b><font color="#cccccc">(findall * 1 4) ****** (path (n n n n) _45f)
+trace ?y</font></b>
+<br>
+<b><font color="#cccccc">(path 1 1 5) ****** (opp n _71c) trace ?n</font></b>
+<br>
+<b><font color="#cccccc">(path 1 1 5) SOLVED (opp n s)</font></b>
+<br>
+<b><font color="#cccccc">(path 1 2 5) ****** (legal (s n n n)) trace
+?y</font></b>
+<br>
+<b><font color="#cccccc">(legal 1 1 6) ****** (illegal (s n n n)) trace
+?y</font></b>
+<br>
+<b><font color="#cccccc">(illegal 1 1 7) ****** (opp s n) trace ?n</font></b>
+<br>
+<b><font color="#cccccc">(illegal 1 1 7) SOLVED (opp s n)</font></b>
+<br>
+<b><font color="#cccccc">(legal 1 1 6) SOLVED (illegal (s n n n))</font></b>
+<br>
+<b><font color="#cccccc">(legal 1 2 6) ****** (!)</font></b>
+<br>
+<b><font color="#cccccc">(legal 1 2 6) SOLVED (!)</font></b>
+<br>
+<b><font color="#cccccc">(legal 1 3 6) ****** (fail)</font></b>
+<br>
+<b><font color="#cccccc">(legal 1 3 6) FAILED (fail)</font></b>
+<br>
+<b><font color="#cccccc">(legal 1 2 6) FAILED (!)</font></b>
+<br>
+<b><font color="#cccccc">(path 1 2 5) FAILED (legal (s n n n)) - try
+again: n(default), y or q ?n</font></b>
+<br>
+<b><font color="#cccccc">(path 1 1 5) FAILED (opp n _71c)</font></b>
+<br>
+<b><font color="#cccccc">(path 2 1 5) ****** (opp n _71c) trace ?n</font></b>
+<br>
+<b><font color="#cccccc">(path 2 1 5) SOLVED (opp n s)</font></b>
+<br>
+<b><font color="#cccccc">(path 2 2 5) ****** (legal (s s n n)) trace
+?n</font></b>
+<br>
+<b><font color="#cccccc">(path 2 2 5) FAILED (legal (s s n n)) - try
+again: n(default), y or q ?n</font></b>
+<br>
+<b><font color="#cccccc">(path 2 1 5) FAILED (opp n _71c)</font></b>
+<br>
+<b><font color="#cccccc">(path 3 1 5) ****** (opp n _71c) trace ?n</font></b>
+<br>
+<b><font color="#cccccc">(path 3 1 5) SOLVED (opp n s)</font></b>
+<br>
+<b><font color="#cccccc">(path 3 2 5) ****** (legal (s n s n)) trace
+?n</font></b>
+<br>
+<b><font color="#cccccc">(path 3 2 5) SOLVED (legal (s n s n))</font></b>
+<br>
+<b><font color="#cccccc">(findall * 1 4) SOLVED (path (n n n n) (s
+n s n))</font></b>
+<br>
+<b><font color="#cccccc">(findall * 2 4) ****** (negg member (s n s
+n) ((n n n n))) trace ?n</font></b>
+<br>
+<b><font color="#cccccc">(findall * 2 4) SOLVED (negg member (s n s
+n) ((n n n n)))</font></b>
+<br>
+<b><font color="#cccccc">&nbsp;&nbsp;&nbsp; ** solution ((s n s n)
+(n n n n)) found **</font></b>
+<br>
+<b><font color="#cccccc">(findall * 2 4) FAILED (negg member (s n s
+n) ((n n n n)))</font></b>
+<br>
+<b><font color="#cccccc">(path 3 2 5) FAILED (legal (s n s n))</font></b>
+<br>
+<b><font color="#cccccc">(path 3 1 5) FAILED (opp n _71c)</font></b>
+<br>
+<b><font color="#cccccc">(path 4 1 5) ****** (opp n _71c) trace ?n</font></b>
+<br>
+<b><font color="#cccccc">(path 4 1 5) SOLVED (opp n s)</font></b>
+<br>
+<b><font color="#cccccc">(path 4 2 5) ****** (legal (s n n s)) trace
+?n</font></b>
+<br>
+<b><font color="#cccccc">(path 4 2 5) FAILED (legal (s n n s)) - try
+again: n(default), y or q ?n</font></b>
+<br>
+<b><font color="#cccccc">(path 4 1 5) FAILED (opp n _71c)</font></b>
+<br>
+<b><font color="#cccccc">(path 5 1 5) ****** (opp n _71c) trace ?n</font></b>
+<br>
+<b><font color="#cccccc">(path 5 1 5) SOLVED (opp n s)</font></b>
+<br>
+<b><font color="#cccccc">(path 5 2 5) ****** (legal (s n n n)) trace
+?n</font></b>
+<br>
+<b><font color="#cccccc">(path 5 2 5) FAILED (legal (s n n n)) - try
+again: n(default), y or q ?n</font></b>
+<br>
+<b><font color="#cccccc">(path 5 1 5) FAILED (opp n _71c)</font></b>
+<br>
+<b><font color="#cccccc">(path 6 1 5) ****** (opp n _71c) trace ?n</font></b>
+<br>
+<b><font color="#cccccc">(path 6 1 5) SOLVED (opp n s)</font></b>
+<br>
+<b><font color="#cccccc">(path 6 2 5) ****** (legal (s s n n)) trace
+?n</font></b>
+<br>
+<b><font color="#cccccc">(path 6 2 5) FAILED (legal (s s n n)) - try
+again: n(default), y or q ?n</font></b>
+<br>
+<b><font color="#cccccc">(path 6 1 5) FAILED (opp n _71c)</font></b>
+<br>
+<b><font color="#cccccc">(path 7 1 5) ****** (opp n _71c) trace ?n</font></b>
+<br>
+<b><font color="#cccccc">(path 7 1 5) SOLVED (opp n s)</font></b>
+<br>
+<b><font color="#cccccc">(path 7 2 5) ****** (legal (s n s n)) trace
+?n</font></b>
+<br>
+<b><font color="#cccccc">(path 7 2 5) SOLVED (legal (s n s n))</font></b>
+<br>
+<b><font color="#cccccc">(findall * 1 4) SOLVED (path (n n n n) (s
+n s n))</font></b>
+<br>
+<b><font color="#cccccc">(findall * 2 4) ****** (negg member (s n s
+n) ((n n n n))) trace ?n</font></b>
+<br>
+<b><font color="#cccccc">(findall * 2 4) SOLVED (negg member (s n s
+n) ((n n n n)))</font></b>
+<br>
+<b><font color="#cccccc">&nbsp;&nbsp;&nbsp; ** solution ((s n s n)
+(n n n n)) found **</font></b>
+<br>
+<b><font color="#cccccc">(findall * 2 4) FAILED (negg member (s n s
+n) ((n n n n)))</font></b>
+<br>
+<b><font color="#cccccc">(path 7 2 5) FAILED (legal (s n s n))</font></b>
+<br>
+<b><font color="#cccccc">(path 7 1 5) FAILED (opp n _71c)</font></b>
+<br>
+<b><font color="#cccccc">(path 8 1 5) ****** (opp n _71c) trace ?n</font></b>
+<br>
+<b><font color="#cccccc">(path 8 1 5) SOLVED (opp n s)</font></b>
+<br>
+<b><font color="#cccccc">(path 8 2 5) ****** (legal (s n n s)) trace
+?n</font></b>
+<br>
+<b><font color="#cccccc">(path 8 2 5) FAILED (legal (s n n s)) - try
+again: n(default), y or q ?n</font></b>
+<br>
+<b><font color="#cccccc">(path 8 1 5) FAILED (opp n _71c)</font></b>
+<br>
+<b><font color="#cccccc">(findall * 1 4) FAILED (path (n n n n) _45f)</font></b>
+<br>
+<b><font color="#cccccc">&nbsp;&nbsp;&nbsp; ** no more solutions for
+findall **</font></b>
+<br>
+<b><font color="#cccccc">(expand 1 1 3) SOLVED (findall (_45f (n n
+n n)) ((path (n n n n) _45f) (negg member _45f ((n n n n)))) (((s n s
+n)
+(n n n n)) ((s n s n) (n n n n))))</font></b>
+<br>
+<b><font color="#cccccc">(breadthF 2 1 2) SOLVED (expand ((n n n n))
+(((s n s n) (n n n n)) ((s n s n) (n n n n))))</font></b>
+<br>
+<b><font color="#cccccc">(breadthF 2 2 2) ****** (append () (((s n
+s n) (n n n n)) ((s n s n) (n n n n))) _37a) trace ?n</font></b>
+<br>
+<b><font color="#cccccc">(breadthF 2 2 2) SOLVED (append () (((s n
+s n) (n n n n)) ((s n s n) (n n n n))) (((s n s n) (n n n n)) ((s n s
+n)
+(n n n n))))</font></b>
+<br>
+<b><font color="#000000">(breadthF 2 3 2) ****** (breadthF (</font><font
+ color="#3333ff">((s
+n s n) (n n n n))</font><font color="#000000"> </font><font
+ color="#3333ff">((s
+n s n) (n n n n))</font><font color="#000000">) _11e) trace ?n</font></b>
+<br>
+<b><font color="#000000">(breadthF 2 3 2) SOLVED (breadthF (((s n s
+n) (n n n n)) ((s n s n) (n n n n))) ((s s s s) (n s n s) (s s n s) (n
+s n n) (s s s n) (n n s n) (s n s n) (n n n n)))</font></b>
+<br>
+<b><font color="#000000">(solve_BF 1 3 1) SOLVED (breadthF (((n n n
+n))) ((s s s s) (n s n s) (s s n s) (n s n n) (s s s n) (n n s n) (s n
+s n) (n n n n)))</font></b>
+<br>
+<b><font color="#000000">(solve_BF 1 4 1) ****** (reverse ((s s s s)
+(n s n s) (s s n s) (n s n n) (s s s n) (n n s n) (s n s n) (n n n n))
+_d) trace ?n</font></b>
+<br>
+<b><font color="#000000">(solve_BF 1 4 1) SOLVED (reverse ((s s s s)
+(n s n s) (s s n s) (n s n n) (s s s n) (n n s n) (s n s n) (n n n n))
+((n n n n) (s n s n) (n n s n) (s s s n) (n s n n) (s s n s) (n s n s)
+(s s s s)))</font></b>
+<br>
+<b><font color="#000000">(solve_BF 1 5 1) ****** (pretty_print_solution
+((n n n n) (s n s n) (n n s n) (s s s n) (n s n n) (s s n s) (n s n s)
+(s s s s))) trace ?n</font></b>
+<br>
+<b><font color="#3333ff">(n n n n) -&gt;</font></b>
+<br>
+<b><font color="#3333ff">(s n s n) -&gt;</font></b>
+<br>
+<b><font color="#3333ff">(n n s n) -&gt;</font></b>
+<br>
+<b><font color="#3333ff">(s s s n) -&gt;</font></b>
+<br>
+<b><font color="#3333ff">(n s n n) -&gt;</font></b>
+<br>
+<b><font color="#3333ff">(s s n s) -&gt;</font></b>
+<br>
+<b><font color="#3333ff">(n s n s) -&gt;</font></b>
+<br>
+<b><font color="#3333ff">(s s s s)&nbsp; success</font></b>
+<br>
+<b><font color="#000000">(solve_BF 1 5 1) SOLVED (pretty_print_solution
+((n n n n) (s n s n) (n n s n) (s s s n) (n s n n) (s s n s) (n s n s)
+(s s s s)))</font></b>
+<br>
+<b><font color="#000000">(solve_BF 1 6 1) ****** (delcl ((goal (s s
+s s))))</font></b>
+<br>
+<b><font color="#000000">(solve_BF 1 6 1) SOLVED (delcl ((goal (s s
+s s))))</font></b>
+<br>
+<b><font color="#000000">(top-level * 1 0) SOLVED (solve_BF (n n n
+n) (s s s s) ((n n n n) (s n s n) (n n s n) (s s s n) (n s n n) (s s n
+s) (n s n s) (s s s s)))</font></b>
+</p>
+<p><b><font color="#993399">Efficiency</font></b>
+</p>
+<p><b><font color="#000000">Fril &gt;reload<a href="breadth_first.frl">
+breadthF</a></font></b>
+</p>
+<p><b><font color="#000000">yes</font></b>
+<br>
+<b><font color="#000000">Fril &gt;reload <a href="maze.frl">maze</a></font></b>
+</p>
+<p><b><font color="#000000">yes</font></b>
+<br>
+<b><font color="#000000">Fril &gt;?((statistics)(solve_BF a i
+S)(statistics))</font></b>
+<br>
+<b><font color="#000000">control
+stack&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+304 of 65472 bytes used</font></b>
+<br>
+<b><font color="#000000">copy
+stack&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+208 of 65472 bytes used</font></b>
+<br>
+<b><font color="#000000">trail&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+8 of 65472 bytes used</font></b>
+<br>
+<b><font color="#000000">environment
+stack&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+32 of 65472 bytes used</font></b>
+<br>
+<b><font color="#000000">support
+stack&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+0 of 65472 bytes used</font></b>
+<br>
+<b><font color="#000000">knowledge
+base&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+104836 of 114576 bytes used</font></b>
+<br>
+<b><font color="#000000">symbol
+table&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+24912 of 32728 bytes used</font></b>
+<br>
+<b><font color="#000000">cputime
+:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+total 0.00 secs</font></b>
+<br>
+<b><font color="#000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(0.00 since last call)</font></b>
+<br>
+<b><font color="#000000">a -&gt;</font></b>
+<br>
+<b><font color="#000000">b -&gt;</font></b>
+<br>
+<b><font color="#000000">e -&gt;</font></b>
+<br>
+<b><font color="#000000">f -&gt;</font></b>
+<br>
+<b><font color="#000000">i&nbsp; successcontrol
+stack&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+464 of 65472 bytes used</font></b>
+<br>
+<b><font color="#000000">copy
+stack&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+4888 of 65472 bytes used</font></b>
+<br>
+<b><font color="#000000">trail&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+328 of 65472 bytes used</font></b>
+<br>
+<b><font color="#000000">environment
+stack&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+88 of 65472 bytes used</font></b>
+<br>
+<b><font color="#000000">support
+stack&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+0 of 65472 bytes used</font></b>
+<br>
+<b><font color="#000000">knowledge
+base&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+106900 of 114576 bytes used</font></b>
+<br>
+<b><font color="#000000">symbol
+table&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+24912 of 32728 bytes used</font></b>
+<br>
+<b><font color="#000000">cputime
+:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+total 0.00 secs</font></b>
+<br>
+<b><font color="#000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(0.00 since last call)</font></b>
+</p>
+<p><b><font color="#000000">yes</font></b>
+<br>
+<b><font color="#000000">Fril &gt;</font></b>
+<br>
+&nbsp;
+</p>
+<p><b><font color="#000000">For the river problem computations are much
+heavier (because of the branching factor):</font></b>
+</p>
+<p><b><font color="#000000">Fril &gt;kill connect</font></b>
+</p>
+<p><b><font color="#000000">yes</font></b>
+<br>
+<b><font color="#000000">Fril &gt;kill path</font></b>
+</p>
+<p><b><font color="#000000">yes</font></b>
+<br>
+<b><font color="#000000">Fril &gt;reload <a href="river.frl">river</a></font></b>
+</p>
+<p><b><font color="#000000">yes</font></b>
+<br>
+<b><font color="#000000">Fril &gt;?((statistics)(solve_BF (n n n n) (s
+s s s) S)(statistics))</font></b>
+<br>
+<b><font color="#000000">control
+stack&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+304 of 65472 bytes used</font></b>
+<br>
+<b><font color="#000000">copy
+stack&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+288 of 65472 bytes used</font></b>
+<br>
+<b><font color="#000000">trail&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+8 of 65472 bytes used</font></b>
+<br>
+<b><font color="#000000">environment
+stack&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+32 of 65472 bytes used</font></b>
+<br>
+<b><font color="#000000">support
+stack&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+0 of 65472 bytes used</font></b>
+<br>
+<b><font color="#000000">knowledge
+base&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+107108 of 114576 bytes used</font></b>
+<br>
+<b><font color="#000000">symbol
+table&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+25032 of 32728 bytes used</font></b>
+<br>
+<b><font color="#000000">cputime
+:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+total 0.00 secs</font></b>
+<br>
+<b><font color="#000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(0.00 since last call)</font></b>
+<br>
+<b><font color="#000000">(n n n n) -&gt;</font></b>
+<br>
+<b><font color="#000000">(s n s n) -&gt;</font></b>
+<br>
+<b><font color="#000000">(n n s n) -&gt;</font></b>
+<br>
+<b><font color="#000000">(s s s n) -&gt;</font></b>
+<br>
+<b><font color="#000000">(n s n n) -&gt;</font></b>
+<br>
+<b><font color="#000000">(s s n s) -&gt;</font></b>
+<br>
+<b><font color="#000000">(n s n s) -&gt;</font></b>
+<br>
+<b><font color="#000000">(s s s s)&nbsp; successcontrol
+stack&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+464 of 65472 bytes used</font></b>
+<br>
+<b><font color="#000000">copy
+stack&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+2240888 of 2291520 bytes used</font></b>
+<br>
+<b><font color="#000000">trail&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+446316 of 458304 bytes used</font></b>
+<br>
+<b><font color="#000000">environment
+stack&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+88 of 65472 bytes used</font></b>
+<br>
+<b><font color="#000000">support
+stack&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+0 of 65472 bytes used</font></b>
+<br>
+<b><font color="#000000">knowledge
+base&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+554335 of 593340 bytes used</font></b>
+<br>
+<b><font color="#000000">symbol
+table&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+25032 of 32728 bytes used</font></b>
+<br>
+<b><font color="#000000">cputime
+:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<span style="color: rgb(255, 0, 0);">total 5.01 secs</span></font></b><span
+ style="font-weight: bold; color: rgb(255, 0, 0);">
+</span><br style="font-weight: bold; color: rgb(255, 0, 0);">
+<b style="font-weight: bold; color: rgb(255, 0, 0);">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(5.01 since last call)</b>
+</p>
+<p><b><font color="#000000">yes</font></b>
+</p>
+<p><b><font color="#000000">Example using the <a
+ href="RomaniaMap_html.html">map of Romania</a>:<br>
+</font></b></p>
+<p><b><font color="#000000">Fril &gt;?((statistics)(findall S ((depthF
+((Oradea)) S)) L)(pp L)(statistics))<br>
+</font></b><font color="#000000">control
+stack&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+304 of 65472 bytes used<br>
+copy
+stack&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+328 of 65472 bytes used<br>
+trail&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+8 of 65472 bytes used<br>
+environment stack&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 32 of 65472
+bytes used<br>
+support
+stack&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+0 of 65472 bytes used<br>
+knowledge
+base&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 154569
+of 208692 bytes used<br>
+symbol
+table&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+30828 of 40910 bytes used</font><b><font color="#000000"><br>
+cputime
+:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+total 11.01 secs<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(0.00 since last call)<br>
+(<br>
+(Bucharest Pitesti Craiova Rimnicu_Vilcea Sibiu Arad Zerind Oradea)<br>
+</font></b></p>
+<p><b><font color="#000000">(Bucharest Pitesti Rimnicu_Vilcea Sibiu
+Arad Zerind Oradea) <br>
+</font></b></p>
+<p><b><font color="#000000">(Bucharest Pitesti Rimnicu_Vilcea Craiova
+Dobreta Mehadia Lugoj Timisoara Arad Zerind Oradea)<br>
+</font></b></p>
+<p><b><font color="#000000">(Bucharest Pitesti Craiova Dobreta Mehadia
+Lugoj Timisoara Arad Zerind Oradea) <br>
+</font></b></p>
+<p><b><font color="#000000">(Bucharest Pitesti Craiova Rimnicu_Vilcea
+Sibiu Oradea)&nbsp; <br>
+</font></b></p>
+<p><b><font color="#000000">(Bucharest Pitesti Rimnicu_Vilcea Craiova
+Dobreta Mehadia Lugoj Timisoara Arad Sibiu Oradea)<br>
+</font></b></p>
+<p><b><font color="#000000">&nbsp;(Bucharest Pitesti Craiova Dobreta
+Mehadia Lugoj Timisoara Arad Sibiu Oradea))</font></b></p>
+<p><font color="#000000">control
+stack&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+232 of 65472 bytes used<br>
+copy
+stack&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+1784 of 65472 bytes used<br>
+trail&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+52 of 65472 bytes used<br>
+environment stack&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 32 of 65472
+bytes used<br>
+support
+stack&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+0 of 65472 bytes used<br>
+knowledge
+base&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 180345
+of 208692 bytes used<br>
+symbol
+table&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+30828 of 40910 bytes used</font><b><font color="#000000"><br>
+cputime
+:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+total 11.01 secs<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(0.00 since last call)<br>
+</font></b></p>
+<p><b><font color="#000000">For 13 successive calls to find all
+solutions with depthF:<br>
+</font></b></p>
+<p><b><font color="#000000">Fril &gt;?((statistics)(findall S ((depthF
+((Oradea)) S)) L)(pp L)(findall S ((depthF ((Oradea)) S)) L)(findall S
+((depthF ((Oradea)) S)) L)(findall S ((depthF ((Oradea)) S)) L)(findall
+S ((depthF ((Oradea)) S)) L)(findall S ((depthF ((Oradea)) S))
+L)(findall S ((depthF ((Oradea)) S)) L)(findall S ((depthF ((Oradea))
+S)) L)(findall S ((depthF ((Oradea)) S)) L)(findall S ((depthF
+((Oradea)) S)) L)(findall S ((depthF ((Oradea)) S)) L)(findall S
+((depthF ((Oradea)) S)) L)(findall S ((depthF ((Oradea)) S))
+L)(statistics))<br>
+control
+stack&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+304 of 65472 bytes used<br>
+copy
+stack&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+1864 of 65472 bytes used<br>
+trail&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+8 of 65472 bytes used<br>
+environment stack&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 32 of 65472
+bytes used<br>
+support
+stack&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+0 of 65472 bytes used<br>
+knowledge
+base&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 155365
+of 208692 bytes used<br>
+symbol
+table&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+30856 of 40910 bytes used<br>
+cputime
+:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+total 11.01 secs<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(0.00 since last call)<br>
+((Bucharest Pitesti Craiova Rimnicu_Vilcea Sibiu Arad Zerind Oradea) <br>
+(Bucharest Pitesti Rimnicu_Vilcea Sibiu Arad Zerind Oradea) <br>
+(Bucharest Pitesti Rimnicu_Vilcea Craiova Dobreta Mehadia Lugoj
+Timisoara Arad Zerind Oradea) <br>
+(Bucharest Pitesti Craiova Dobreta Mehadia Lugoj Timisoara Arad Zerind
+Oradea)<br>
+(Bucharest Pitesti Craiova Rimnicu_Vilcea Sibiu Oradea) <br>
+(Bucharest Pitesti Rimnicu_Vilcea Sibiu Oradea) <br>
+(Bucharest Pitesti Rimnicu_Vilcea Craiova Dobreta Mehadia Lugoj
+Timisoara Arad Sibiu Oradea) <br>
+(Bucharest Pitesti Craiova Dobreta Mehadia Lugoj Timisoara Arad Sibiu
+Oradea))<br>
+</font></b><font color="#000000">control
+stack&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+232 of 65472 bytes used<br>
+copy
+stack&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+20600 of 130944 bytes used<br>
+trail&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+436 of 65472 bytes used<br>
+environment stack&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 32 of 65472
+bytes used<br>
+support
+stack&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+0 of 65472 bytes used<br>
+knowledge
+base&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 491548
+of 507408 bytes used<br>
+symbol
+table&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+30856 of 40910 bytes used</font><b><font color="#000000"><br>
+<span style="color: rgb(255, 0, 0);">cputime
+:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+total 12.01 secs</span><br style="color: rgb(255, 0, 0);">
+<span style="color: rgb(255, 0, 0);">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(1.00 since last call)</span><br>
+<br>
+Test the same for breadth first (here only run is shown):<br>
+<br>
+</font></b></p>
+<p><b><font color="#000000">Fril &gt;?((findall S ((breadthF ((Oradea))
+S)) L)(pp L))<br>
+((Bucharest Pitesti Rimnicu_Vilcea Sibiu Oradea) <br>
+(Bucharest Pitesti Craiova Rimnicu_Vilcea Sibiu Oradea) <br>
+(Bucharest Pitesti Rimnicu_Vilcea Sibiu Arad Zerind Oradea) <br>
+(Bucharest Pitesti Craiova Rimnicu_Vilcea Sibiu Arad Zerind Oradea) <br>
+(Bucharest Pitesti Craiova Dobreta Mehadia Lugoj Timisoara Arad Zerind
+Oradea) <br>
+(Bucharest Pitesti Craiova Dobreta Mehadia Lugoj Timisoara Arad Sibiu
+Oradea)<br>
+(Bucharest Pitesti Rimnicu_Vilcea Craiova Dobreta Mehadia Lugoj
+Timisoara Arad Zerind Oradea) <br>
+(Bucharest Pitesti Rimnicu_Vilcea Craiova Dobreta Mehadia Lugoj
+Timisoara Arad Sibiu Oradea))<br>
+</font></b></p>
+<p><br>
+</p>
+<p><b><font color="#000000">The efficiency of FRIL (in general logic
+programming)
+programs is not the issue here. There are many ways in which the
+breadth
+fisrt search program above can be improved, including:</font></b>
+</p>
+<ul>
+  <li> <b><font color="#000000">implementing the behavior of findall
+(rather than
+using the bip version)</font></b></li>
+  <li> <b><font color="#000000">adding/deleting&nbsp; clauses in the
+knowledge
+base, rather than producing the list of partial paths : this is very
+dangerous,
+but it has the potential of being much faster since the fastest
+operation
+for FRIL is to look up the knowledge base.</font></b></li>
+</ul>
+<b><font color="#000000">Real world search&nbsp; problems&nbsp; may
+exceed
+in complexity even very clever implementations of breadth first
+search.&nbsp;
+In these cases new algorithms, which make use of some additional
+information
+regarding the algorithm's performance are used.</font></b>
+<br>
+&nbsp;
+<br>
+&nbsp;
+<br>
+<br>
+<center>
+<p><b><font color="#993399">Heuristic search</font></b></p>
+</center>
+<p><b><font color="#000000">Associate a cost with each path: </font><font
+ color="#3333ff">Best
+first search</font></b>
+</p>
+<p><b><font color="#3333ff">Greedy :</font></b>
+<br>
+<b><font color="#000000">&nbsp;&nbsp; Minimize the estimated cost of
+the cheapest path from the current state to the goal state.</font></b>
+</p>
+<p><b><i><font color="#cc0000">h(n) = <u>extimated</u> cost of the
+cheapest
+path from n to the goal state.</font></i></b>
+</p>
+<p><b><font color="#3333ff">A*</font><font color="#000000"> :</font></b>
+<br>
+<b><font color="#000000">&nbsp;&nbsp; Minimize the total path cost.</font></b>
+</p>
+<p><b><i><font color="#cc0000">f(n) = total path cost of the cheapest
+solution
+from the node n to the goal.</font></i></b>
+<br>
+<b><i><font color="#cc0000">g(n) = cost so far (can be computed
+exactly).</font></i></b>
+<br>
+<b><i><font color="#cc0000">h(n) = <u>extimated</u> cost of the
+cheapest
+path from n to the goal state.</font></i></b>
+</p>
+<center>
+<p><b><i><font color="#3333ff">f(n) = g(n) +&nbsp; h(n)</font></i></b></p>
+</center>
+<b><font color="#000000">f: evaluation function.</font></b>
+<br>
+<b><font color="#000000">h : heuristic function.</font></b>
+<br>
+<b><font color="#000000">g: cost function.</font></b>
+<p><b><u><font color="#000000">Properties required of h:</font></u></b>
+</p>
+<blockquote><b><font color="#cc0000">admissibility</font><font
+ color="#000000">:
+h must never overestimate the real cost of reaching the goal : h*.
+(example
+of h: bird flight, or straight line distance).</font></b></blockquote>
+<p><br>
+<b><font color="#000000">Properties for f:</font></b>
+<br>
+&nbsp;
+</p>
+<blockquote><b><font color="#000000">If h is admissible then f(n) never
+overestimates the cost of the cheapest path: f*.</font></b>
+  <p><b><font color="#ff0000">Monotonicity</font><font color="#000000">:
+along any path f-cost never decreases.&nbsp; To realize this property
+we
+use the </font><i><font color="#3333ff">maxpath</font></i><font
+ color="#000000">
+equation:</font></b></p>
+</blockquote>
+<center>
+<p><br>
+<b><i><font color="#3333ff">f(n') = max (f(n) , g(n') + h(n'))</font></i></b></p>
+</center>
+<p>&nbsp;<br>
+</p>
+<p><b><font color="#000000">where </font><i><font color="#3333ff">n</font></i><font
+ color="#000000">
+is a parent of </font><i><font color="#3333ff">n'.</font></i></b>
+</p>
+<p><b><font color="#993399">Properties of A*:</font></b>
+</p>
+<ul>
+  <li> <b><font color="#cc33cc">A* is optimal</font><font
+ color="#000000">:
+it
+finds the higest quality solution.</font></b></li>
+  <li> <b><font color="#cc33cc">A* is complete</font><font
+ color="#000000">:
+it
+is guarranteed to find a solution.</font></b></li>
+  <li> <b><font color="#cc33cc">Complexity</font><font color="#000000">:</font></b></li>
+  <ul>
+    <li> <b><font color="#000000">&nbsp; computation: exponential
+growth
+unless
+the error in the heuristic function grows at most as fast as&nbsp; the
+logarithm of the actual path cost:</font></b></li>
+  </ul>
+</ul>
+<ul>
+  <center><b><i><font color="#3333ff">| h(n) -h*(n)|&nbsp;&nbsp; less
+or
+equal O(log h*(n))</font></i></b></center>
+  <ul>
+    <li> <b><font color="#000000">heavy use of space.</font></b></li>
+  </ul>
+</ul>
+<p><br>
+<b><font color="#000000">Implementation of heuristic search (will
+use the graph <a href="heuristic_graph.jpg">example</a>):</font></b>
+</p>
+<p><b><font color="#000000">Branch : </font><font color="#3333ff">(</font><font
+ color="#993399">(
+N HValue PRev_path_length ) </font><font color="#3333ff">| PRev_path)</font></b>
+</p>
+<p><b><font color="#000000">where PRev_path is a list of nodes of
+length&nbsp;
+PRev_path_length.</font></b>
+</p>
+<p><b><font color="#000000">The list of branches is maintained in
+increasing
+value of the HValue (the heuristic value).</font></b>
+</p>
+<p><b><font color="#000000">Initially the search starts from the node
+(S
+0 0) that is the start node S with heuristc value equal to 0 and
+previous
+path length equal to 0.</font></b>
+<br>
+&nbsp;
+</p>
+<p>For the graph example we have the following definitions:
+</p>
+<p>/* (connect X Y C) holds if there is a branch from X to Y whose cost
+is C */
+</p>
+<p><b><font color="#990000">((connect s e 2))</font></b>
+<br>
+<b><font color="#990000">((connect e f 4))</font></b>
+<br>
+<b><font color="#990000">((connect f g 2))</font></b>
+<br>
+<b><font color="#990000">((connect g t 2))</font></b>
+<br>
+<b><font color="#990000">((connect t d 3))</font></b>
+<br>
+<b><font color="#990000">((connect d c 3))</font></b>
+<br>
+<b><font color="#990000">((connect c b 2))</font></b>
+<br>
+<b><font color="#990000">((connect b a 2))</font></b>
+<br>
+<b><font color="#990000">((connect a s 2))</font></b>
+</p>
+<p><b><font color="#990000">((path X Y C)(connect X Y C))</font></b>
+<br>
+<b><font color="#990000">%((path X Y C)(connect Y X C))</font></b>
+</p>
+<p><b><font color="#990000">/* (goal G) holds if G is the goal state</font></b>
+</p>
+<p><b><font color="#990000">((goal t))</font></b>
+</p>
+<p><b><font color="#990000">/* (h N H) holds if H is the estimated cost
+from N to the goal</font></b>
+<br>
+<b><font color="#990000">Note that we do not assign H for the start
+state*/</font></b>
+<br>
+<b><font color="#990000">((h a 5))</font></b>
+<br>
+<b><font color="#990000">((h b 4))</font></b>
+<br>
+<b><font color="#990000">((h c 4))</font></b>
+<br>
+<b><font color="#990000">((h d 3))</font></b>
+<br>
+<b><font color="#990000">((h g 2))</font></b>
+<br>
+<b><font color="#990000">((h f 4))</font></b>
+<br>
+<b><font color="#990000">((h e 7))</font></b>
+<br>
+<b><font color="#990000">((h t 0))&nbsp; % t is the goal state</font></b>
+</p>
+<p><b><font color="#000000">/* (goal G) holds if G is the goal state</font></b>
+</p>
+<p><b><font color="#990000">((goal t))</font></b>
+</p>
+<p><b><font color="#000000">/* (start S) holds if S is the start state</font></b>
+</p>
+<p><b><font color="#990000">((start s))</font></b>
+</p>
+<p><b><font color="#000000">/* (h N H) holds if H is the estimated cost
+from N to the goal</font></b>
+<br>
+<b><font color="#000000">Note that we do not assign H for the start
+state*/</font></b>
+</p>
+<p><b><font color="#993300">((h a 5))</font></b>
+<br>
+<b><font color="#990000">((h b 4))</font></b>
+<br>
+<b><font color="#990000">((h c 4))</font></b>
+<br>
+<b><font color="#990000">((h d 3))</font></b>
+<br>
+<b><font color="#990000">((h g 2))</font></b>
+<br>
+<b><font color="#990000">((h f 4))</font></b>
+<br>
+<b><font color="#990000">((h e 7))</font></b>
+<br>
+<b><font color="#990000">((h t 0))&nbsp; % t is the goal state</font></b>
+</p>
+<p><b><font color="#ff0000">Fril &gt;?((connect X Y C)(pp)(p X Y
+C)(fail))</font></b>
+</p>
+<p><b><font color="#ff0000">s e 2</font></b>
+<br>
+<b><font color="#ff0000">e f 4</font></b>
+<br>
+<b><font color="#ff0000">f g 2</font></b>
+<br>
+<b><font color="#ff0000">g t 2</font></b>
+<br>
+<b><font color="#ff0000">t d 3</font></b>
+<br>
+<b><font color="#ff0000">d c 3</font></b>
+<br>
+<b><font color="#ff0000">c b 2</font></b>
+<br>
+<b><font color="#ff0000">b a 2</font></b>
+<br>
+<b><font color="#ff0000">a s 2</font></b>
+<br>
+<b><font color="#ff0000">no</font></b>
+</p>
+<p><b><font color="#cc0000">Fril&gt; qh((h N H))</font></b>
+</p>
+<p><b><font color="#cc0000">((h a 5))</font></b>
+<br>
+<b><font color="#cc0000">((h b 4))</font></b>
+<br>
+<b><font color="#cc0000">((h c 4))</font></b>
+<br>
+<b><font color="#cc0000">((h d 3))</font></b>
+<br>
+<b><font color="#cc0000">((h g 2))</font></b>
+<br>
+<b><font color="#cc0000">((h f 4))</font></b>
+<br>
+<b><font color="#cc0000">((h e 7))</font></b>
+<br>
+<b><font color="#cc0000">((h t 0))</font></b>
+</p>
+<p><b><font color="#cc0000">no (more) solutions</font></b>
+</p>
+<p><b><font color="#000000">The predicate </font><font color="#3333ff">((go
+L P))</font><font color="#000000"> succeds if L is an ordered list of
+branches
+and P is the path with no loops from any head nodes from L to the goal
+G found in the knowledge base through the predicate ((goal G)).</font></b>
+</p>
+<p><b><font color="#000000">Typically </font><font color="#3333ff">go </font><font
+ color="#000000">will
+call a predicate </font><font color="#3333ff">(move X Y)</font><font
+ color="#000000">
+which succeeds when Y is the sorted list of allpossible branches formed
+by expanding the branch X.</font></b>
+<br>
+<b><font color="#000000">In turn move&nbsp; will call the predicates:</font></b>
+</p>
+<p><b><font color="#3366ff">(paths N NL P)</font><font color="#000000">
+which succeeds if NL is the list of all nodes connected to N not inthe
+list of nodes P.</font></b>
+</p>
+<p><b><font color="#3333ff">((paths N NL P)</font></b>
+<br>
+<b><font color="#3333ff">&nbsp;&nbsp;&nbsp; (isall NL X (path N X _
+)(negg member X P) ))</font></b>
+<br>
+&nbsp;
+</p>
+<p><b><font color="#cc0000">Fril &gt;?((paths s NL () )(pp NL))</font></b>
+<br>
+<b><font color="#cc0000">(a e)</font></b>
+</p>
+<p><b><font color="#000000">where&nbsp; isall is a bip predicate (like
+findall but it puts the solutions in reverse order)</font></b>
+<br>
+&nbsp;
+</p>
+<blockquote><u><font color="#000000">example for isall:</font></u>
+  <p><font color="#000000">((test a b a))</font> <br>
+  <font color="#000000">((test d e f))</font> <br>
+  <font color="#000000">((test g h g))</font> <br>
+  <font color="#000000">?((isall L (X Y) (test X Y Z) (eq X Z)) (p L))</font>
+  <br>
+  <font color="#000000">((g h) (a b))</font> <br>
+  <font color="#000000">yes</font></p>
+</blockquote>
+<b><font color="#000000">/*</font></b>
+<br>
+<b><font color="#000000">(new_paths NL L PP BL) which succeeds when
+BL is a&nbsp; list of all branches obtained from the list of nodes NL,
+where the previous path is given by the list of nodes PP of length L.</font></b>
+<br>
+*/
+<br>
+<b><font color="#3333ff">((new_paths () L PP () ))</font></b>
+<br>
+<b><font color="#3333ff">((new_paths (NN |ON) L PP (((NN HV L1)|PP)|OP))</font></b>
+<br>
+<b><font color="#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(sum L 1 L1)</font></b>
+<br>
+<b><font color="#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(heuristic NN L1 HV)</font></b>
+<br>
+<b><font color="#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(new_paths ON L PP OP))</font></b>
+<p>/* (heuristic&nbsp; _ _ 10) */
+<br>
+&nbsp;
+</p>
+<p><b><font color="#000000">/* (move BRanch BRanchList) succeedswhen
+BRanchList
+is a sorted list of branched obtained by expanding BRanch.</font></b>
+<br>
+<b><font color="#3333ff">*/</font></b>
+</p>
+<p><b><font color="#3333ff">((move&nbsp; ((N HV L)| T) NL)</font></b>
+<br>
+<b><font color="#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(paths N Y T)</font></b>
+<br>
+<b><font color="#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(new_paths Y L (N|T) NL))</font></b>
+</p>
+<p><b><font color="#3333ff">/*</font></b>
+<br>
+<b><font color="#3333ff">(rem_dup X Y A B)</font><font color="#000000">
+which succeeds when A and B are lists of brancehs formed from the list
+of brancehs X and Y respectively, by removing the longer of the two
+branches
+in X and Y that go to the same node, if such a branch exists.</font></b>
+<br>
+*/
+<br>
+<b><font color="#3333ff">((rem_dup () Y () Y))</font></b>
+<br>
+<b><font color="#3333ff">((rem_dup X () X () ))</font></b>
+<br>
+<b><font color="#3333ff">((rem_dup (((X Y Z)|P)|ON)&nbsp; (((X Y1
+Z1)|P1)
+|ON1)&nbsp; (((X Y Z)|P)|R) R1)</font></b>
+<br>
+<b><font color="#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(less Z Z1)</font></b>
+<br>
+<b><font color="#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(rem_dup ON ON1 R R1))</font></b>
+<br>
+<b><font color="#3333ff">((rem_dup (((X Y Z)|P)|ON)&nbsp; (((X Y1
+Z1)|P1)
+|ON1)&nbsp;&nbsp; R (((X Y1 1Z)|P1)|R1) )</font></b>
+<br>
+<b><font color="#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(less Z1&nbsp; Z)</font></b>
+<br>
+<b><font color="#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(rem_dup ON ON1 R R1))</font></b>
+</p>
+<p><b><font color="#3333ff">((rem_dup (((X Y Z)|P)|ON)&nbsp; (((X Y1
+Z1)|P1)
+|ON1)&nbsp; (((X Y Z)|P)|R) (((X Y1 1Z)|P1)|R1) )</font></b>
+<br>
+<b><font color="#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(rem_dup ON ON1 R R1))</font></b>
+</p>
+<p><b><font color="#000000">(put_in_rest X Y Z) which succeeds when Z
+is
+the ordered list obtained bymerging a list of branches X with the
+orderd
+list of branches Y:</font></b>
+</p>
+<p><b><font color="#3333ff">((put_in_rest () Y Y))</font></b>
+<br>
+<b><font color="#3333ff">((put_in_rest (X|Y) Z L)</font></b>
+<br>
+<b><font color="#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(put_in_list X Z L1)</font></b>
+<br>
+<b><font color="#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(put_in_rest Y L1 L))</font></b>
+<br>
+&nbsp;
+</p>
+<p><b><font color="#000000">where put_in_list inserts a branch in its
+proper
+position in an ordered list of&nbsp; branches.</font></b>
+</p>
+<p><b><font color="#3333ff">((put_in_list Y () (Y)))</font></b>
+<br>
+<b><font color="#3333ff">((put_in_list ((X Y Z)|R)&nbsp; (((X1 Y1
+Z1)|R1)
+|L)&nbsp; (((X1 Y1 Z1)|R1)|NL) )</font></b>
+<br>
+<b><font color="#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(less Y1 Y)</font></b>
+<br>
+<b><font color="#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(put_in_list ((X Y Z)|R) L NL))</font></b>
+</p>
+<p><b><font color="#3333ff">((put_in_list ((X Y Z)|R)&nbsp; (((X1 Y1
+Z1)|R1)
+|L)&nbsp; (((X Y Z)|R) (X1 Y1 Z1)|R1) | L) )</font></b>
+<br>
+<b><font color="#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(negg less Y1 Y))</font></b>
+</p>
+<p><b><font color="#000000">The predicate go is now as follows:</font></b>
+</p>
+<p><b><font color="#3333ff">(( go (((X HV L)|Y)|R) (X|Y))</font></b>
+<br>
+<b><font color="#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(goal X))</font></b>
+</p>
+<p><b><font color="#3333ff">((go (X|Y) Z)</font></b>
+<br>
+<b><font color="#3333ff">&nbsp;&nbsp;&nbsp; (move X NL)</font></b>
+<br>
+<b><font color="#3333ff">&nbsp;&nbsp;&nbsp; (rem_dup NL Y NL1 Y1)</font></b>
+<br>
+<b><font color="#3333ff">&nbsp;&nbsp;&nbsp; (put_in_rest NL1 Y1 NP)</font></b>
+<br>
+<b><font color="#3333ff">&nbsp;&nbsp;&nbsp; (go NP Z))</font></b>
+</p>
+<p><b><font color="#cc0000">Fril &gt;?((go (((s 0 0))) P)(pp P))</font></b>
+<br>
+<b><font color="#cc0000">(t g f e s)</font></b>
+</p>
+<p>Next wrap go into a top level h_search predicate similar to that for
+breadth first:
+</p>
+<p><b><font color="#990000">((h_search START GOAL PATH)</font></b>
+<br>
+<b><font color="#990000">&nbsp;&nbsp;&nbsp; (kill goal)</font></b>
+<br>
+<b><font color="#990000">&nbsp;&nbsp;&nbsp; (addcl ((goal G)) )</font></b>
+<br>
+<b><font color="#990000">&nbsp;&nbsp;&nbsp; (go (((START 0 0))) P)</font></b>
+<br>
+<b><font color="#990000">&nbsp;&nbsp;&nbsp; (reverse P PATH)</font></b>
+<br>
+<b><font color="#990000">&nbsp;&nbsp;&nbsp; (pretty_print PATH)</font></b>
+<br>
+<b><font color="#990000">&nbsp;&nbsp;&nbsp; (delcl ((goal GOAL)) ))</font></b>
+<br>
+&nbsp;
+</p>
+<p><b><font color="#000000">Note that I cheated in calculating the
+heuristic
+function, as I have assigned this to be the same.&nbsp; Actually, what
+kind of search is obtained in this case?&nbsp; It is left as an
+exercise
+(or I may actually do it myself) for you to write the correct predicate
+for that.</font></b>
+</p>
+<p><b><font color="#ff0000">Fril&gt; list heuristic</font></b>
+</p>
+<p><b><font color="#ff0000">((heuristic e _69 9))</font></b>
+<br>
+<b><font color="#ff0000">((heuristic f _69 11))</font></b>
+<br>
+<b><font color="#ff0000">((heuristic g _69 11))</font></b>
+<br>
+<b><font color="#ff0000">((heuristic a _69 7))</font></b>
+<br>
+<b><font color="#ff0000">((heuristic b _69 8))</font></b>
+<br>
+<b><font color="#ff0000">((heuristic d _69 12))</font></b>
+<br>
+<b><font color="#ff0000">((heuristic c _69 10))</font></b>
+<br>
+<b><font color="#ff0000">((heuristic t _69 11))</font></b>
+</p>
+<p><b><font color="#ff0000">yes</font></b>
+<br>
+<b><font color="#ff0000">Fril &gt;?((go (((s 0 0))) P)(pp P))</font></b>
+<br>
+<b><font color="#ff0000">(t g f e s)</font></b>
+<br>
+&nbsp;
+</p>
+<p><b><font color="#990000">But actually this is found going</font></b>
+<br>
+<b><font color="#990000">(s -&gt; a) : 7</font></b>
+<br>
+<b><font color="#990000">(s -&gt; e) : 9</font></b>
+<br>
+<b><font color="#990000">(s -&gt; a -&gt; b) : 8</font></b>
+<br>
+<b><font color="#990000">(s -&gt; a -&gt; b -&gt; c) : 10 drop this and
+pick
+up (s -&gt; e) : 9 to obtain (s -&gt; e -&gt; f) : 10</font></b>
+<br>
+<b><font color="#990000">(s -&gt; e -&gt; f-&gt; g) : 11 and finally (s
+-&gt; e
+-&gt; f-&gt; g -&gt; t)</font></b>
+<br>
+&nbsp;
+</p>
+<p><b><font color="#990000">Fril &gt;tq((go (((s 0 0))) P)(pp P))</font></b>
+</p>
+<p><b><font color="#990000">Starting Fril Trace - header gives
+(Clause-name
+Index Nth-goal-in-body Depth)</font></b>
+</p>
+<p><b><font color="#cc0000">(top-level * 1 0) ****** (go (((s 0 0)))
+_b)
+trace ?y</font></b>
+<br>
+<b><font color="#990000">(go 1 1 1) ****** (goal s) trace ?n</font></b>
+<br>
+<b><font color="#990000">(go 1 1 1) FAILED (goal s) - unification failed</font></b>
+<br>
+<b><font color="#990000">(go 2 1 1) ****** (move ((s 0 0)) _11f) trace
+?y</font></b>
+<br>
+<b><font color="#990000">(move 1 1 2) ****** (paths s _20e ()) trace
+?n</font></b>
+<br>
+<b><font color="#990000">(move 1 1 2) SOLVED (paths s (e) ())</font></b>
+<br>
+<b><font color="#990000">(move 1 2 2) ****** (new_paths (e) 0 (s) _11f)
+trace ?n</font></b>
+<br>
+<b><font color="#990000">(move 1 2 2) SOLVED (new_paths (e) 0 (s) (((e
+9 1) s)))</font></b>
+<br>
+<b><font color="#990000">(go 2 1 1) SOLVED (move ((s 0 0)) (((e 9 1)
+s)))</font></b>
+<br>
+<b><font color="#990000">(go 2 2 1) ****** (rem_dup (((e 9 1) s)) ()
+_120 _121) trace ?n</font></b>
+<br>
+<b><font color="#990000">(go 2 2 1) SOLVED (rem_dup (((e 9 1) s)) ()
+(((e 9 1) s)) ())</font></b>
+<br>
+<b><font color="#990000">(go 2 3 1) ****** (put_in_rest (((e 9 1) s))
+() _122) trace ?n</font></b>
+<br>
+<b><font color="#990000">(go 2 3 1) SOLVED (put_in_rest (((e 9 1) s))
+() (((e 9 1) s)))</font></b>
+<br>
+<b><font color="#cc0000">(go 2 4 1) ****** (go (((e 9 1) s)) _b) trace
+?y</font></b>
+<br>
+<b><font color="#990000">(go 1 1 2) ****** (goal e) trace ?n</font></b>
+<br>
+<b><font color="#990000">(go 1 1 2) FAILED (goal e) - unification failed</font></b>
+<br>
+<b><font color="#990000">(go 2 1 2) ****** (move ((e 9 1) s) _7a2)
+trace ?n</font></b>
+<br>
+<b><font color="#990000">(go 2 1 2) SOLVED (move ((e 9 1) s) (((f 11
+2) e s)))</font></b>
+<br>
+<b><font color="#990000">(go 2 2 2) ****** (rem_dup (((f 11 2) e s))
+() _7a3 _7a4) trace ?n</font></b>
+<br>
+<b><font color="#990000">(go 2 2 2) SOLVED (rem_dup (((f 11 2) e s))
+() (((f 11 2) e s)) ())</font></b>
+<br>
+<b><font color="#990000">(go 2 3 2) ****** (put_in_rest (((f 11 2)
+e s)) () _7a5) trace ?n</font></b>
+<br>
+<b><font color="#990000">(go 2 3 2) SOLVED (put_in_rest (((f 11 2)
+e s)) () (((f 11 2) e s)))</font></b>
+<br>
+<b><font color="#cc0000">(go 2 4 2) ****** (go (((f 11 2) e s)) _b)
+trace ?y</font></b>
+<br>
+<b><font color="#990000">(go 1 1 3) ****** (goal f) trace ?n</font></b>
+<br>
+<b><font color="#990000">(go 1 1 3) FAILED (goal f) - unification failed</font></b>
+<br>
+<b><font color="#990000">(go 2 1 3) ****** (move ((f 11 2) e s) _bdb)
+trace ?n</font></b>
+<br>
+<b><font color="#990000">(go 2 1 3) SOLVED (move ((f 11 2) e s) (((g
+11 3) f e s)))</font></b>
+<br>
+<b><font color="#990000">(go 2 2 3) ****** (rem_dup (((g 11 3) f e
+s)) () _bdc _bdd) trace ?n</font></b>
+<br>
+<b><font color="#990000">(go 2 2 3) SOLVED (rem_dup (((g 11 3) f e
+s)) () (((g 11 3) f e s)) ())</font></b>
+<br>
+<b><font color="#990000">(go 2 3 3) ****** (put_in_rest (((g 11 3)
+f e s)) () _bde) trace ?n</font></b>
+<br>
+<b><font color="#990000">(go 2 3 3) SOLVED (put_in_rest (((g 11 3)
+f e s)) () (((g 11 3) f e s)))</font></b>
+<br>
+<b><font color="#cc0000">(go 2 4 3) ****** (go (((g 11 3) f e s)) _b)
+trace ?y</font></b>
+<br>
+<b><font color="#990000">(go 1 1 4) ****** (goal g) trace ?n</font></b>
+<br>
+<b><font color="#990000">(go 1 1 4) FAILED (goal g) - unification failed</font></b>
+<br>
+<b><font color="#990000">(go 2 1 4) ****** (move ((g 11 3) f e s)
+_1014)
+trace ?n</font></b>
+<br>
+<b><font color="#990000">(go 2 1 4) SOLVED (move ((g 11 3) f e s) (((t
+11 4) g f e s)))</font></b>
+<br>
+<b><font color="#990000">(go 2 2 4) ****** (rem_dup (((t 11 4) g f
+e s)) () _1015 _1016) trace ?n</font></b>
+<br>
+<b><font color="#990000">(go 2 2 4) SOLVED (rem_dup (((t 11 4) g f
+e s)) () (((t 11 4) g f e s)) ())</font></b>
+<br>
+<b><font color="#990000">(go 2 3 4) ****** (put_in_rest (((t 11 4)
+g f e s)) () _1017) trace ?n</font></b>
+<br>
+<b><font color="#990000">(go 2 3 4) SOLVED (put_in_rest (((t 11 4)
+g f e s)) () (((t 11 4) g f e s)))</font></b>
+<br>
+<b><font color="#cc0000">(go 2 4 4) ****** (go (((t 11 4) g f e s))
+_b) trace ?y</font></b>
+<br>
+<b><font color="#990000">(go 1 1 5) ****** (goal t) trace ?n</font></b>
+<br>
+<b><font color="#990000">(go 1 1 5) SOLVED (goal t)</font></b>
+<br>
+<b><font color="#009900">(go 2 4 4) SOLVED (go (((t 11 4) g f e s))
+(t g f e s))</font></b>
+<br>
+<b><font color="#009900">(go 2 4 3) SOLVED (go (((g 11 3) f e s)) (t
+g f e s))</font></b>
+<br>
+<b><font color="#009900">(go 2 4 2) SOLVED (go (((f 11 2) e s)) (t
+g f e s))</font></b>
+<br>
+<b><font color="#009900">(go 2 4 1) SOLVED (go (((e 9 1) s)) (t g f
+e s))</font></b>
+<br>
+<b><font color="#009900">(top-level * 1 0) SOLVED (go (((s 0 0))) (t
+g f e s))</font></b>
+<br>
+<b><font color="#990000">(top-level * 2 0) ****** (pp (t g f e s))</font></b>
+<br>
+<b><font color="#990000">(t g f e s)</font></b>
+<br>
+<b><font color="#990000">(top-level * 2 0) SOLVED (pp (t g f e s))</font></b>
+<br>
+&nbsp;
+</p>
+</body>
+</html>

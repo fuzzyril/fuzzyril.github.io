@@ -1,0 +1,1086 @@
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=iso-8859-1">
+  <meta name="GENERATOR"
+ content="Mozilla/4.79 [en] (X11; U; SunOS 5.8 sun4u) [Netscape]">
+  <title>LECTURE PACKET 5</title>
+</head>
+<body alink="#ff0000" bgcolor="#ccffff" link="#0000ee" text="#000000"
+ vlink="#551a8b">
+&nbsp;
+<center>
+<p>The <b><font color="#990000">CUT</font></b> (continued)<br>
+<a href="Lecture5_small_print.html">small print lecture</a><br>
+</p>
+</center>
+<p>More on the cut, the "cut-fail" combination and negation as failure
+</p>
+<p>consider the predicate p1 defined as :
+</p>
+<p><b><font color="#3333ff">((p1 1))</font></b>
+<br>
+<b><font color="#3333ff">((p1 2)(!))</font></b>
+<br>
+<b><font color="#3333ff">((p1 3))</font></b>
+</p>
+<p>and the following queries
+</p>
+<p>Fril &gt;<b><font color="#ff6600">tq((p1 X)(fail))</font></b>
+<br>
+Loading trace...done
+</p>
+<p>Starting Fril Trace - header gives (Clause-name Index
+Nth-goal-in-body
+Depth)
+</p>
+<p>(top-level * 1 0) ****** (p1 _3) trace ?y
+<br>
+(top-level * 1 0) SOLVED (p1 1)
+<br>
+(top-level * 2 0) ****** (fail)
+<br>
+(top-level * 2 0) FAILED (fail)
+<br>
+(p1 2 1 1) ****** (!)
+<br>
+(p1 2 1 1) SOLVED (!)
+<br>
+(top-level * 1 0) SOLVED (p1 2)
+<br>
+(top-level * 2 0) ****** (fail)
+<br>
+(top-level * 2 0) FAILED (fail)
+<br>
+(p1 2 1 1) FAILED (!)
+<br>
+(top-level * 1 0) FAILED (p1 _3)
+</p>
+<p>no
+</p>
+<p>Fril &gt;<b><font color="#ff6600">tq((p1 X)(p1 Y)(fail))</font></b>
+</p>
+<p>Starting Fril Trace - header gives (Clause-name Index
+Nth-goal-in-body
+Depth)
+</p>
+<p>(top-level * 1 0) ****** (p1 _3) trace ?y
+<br>
+(top-level * 1 0) SOLVED (p1 1)
+<br>
+(top-level * 2 0) ****** (p1 _7) trace ?y
+<br>
+(top-level * 2 0) SOLVED (p1 1)
+<br>
+(top-level * 3 0) ****** (fail)
+<br>
+(top-level * 3 0) FAILED (fail)
+<br>
+(p1 2 1 1) ****** (!)
+<br>
+(p1 2 1 1) SOLVED (!)
+<br>
+(top-level * 2 0) SOLVED (p1 2)
+<br>
+(top-level * 3 0) ****** (fail)
+<br>
+(top-level * 3 0) FAILED (fail)
+<br>
+(p1 2 1 1) FAILED (!)
+<br>
+(top-level * 2 0) FAILED (p1 _7)
+<br>
+(p1 2 1 1) ****** (!)
+<br>
+(p1 2 1 1) SOLVED (!)
+<br>
+(top-level * 1 0) SOLVED (p1 2)
+<br>
+(top-level * 2 0) ****** (p1 _7) trace ?y
+<br>
+(top-level * 2 0) SOLVED (p1 1)
+<br>
+(top-level * 3 0) ****** (fail)
+<br>
+(top-level * 3 0) FAILED (fail)
+<br>
+(p1 2 1 1) ****** (!)
+<br>
+(p1 2 1 1) SOLVED (!)
+<br>
+(top-level * 2 0) SOLVED (p1 2)
+<br>
+(top-level * 3 0) ****** (fail)
+<br>
+(top-level * 3 0) FAILED (fail)
+<br>
+(p1 2 1 1) FAILED (!)
+<br>
+(top-level * 2 0) FAILED (p1 _7)
+<br>
+(p1 2 1 1) FAILED (!)
+<br>
+(top-level * 1 0) FAILED (p1 _3)
+</p>
+<p>Fril &gt;<b><font color="#ff0000">tq((p1 X)(!)(p1 Y)(fail))</font></b>
+</p>
+<p>Starting Fril Trace - header gives (Clause-name Index
+Nth-goal-in-body
+Depth)
+</p>
+<p>(top-level * 1 0) ****** (p1 _3) trace ?y
+<br>
+(top-level * 1 0) SOLVED (p1 1)
+<br>
+(top-level * 2 0) ****** (!)
+<br>
+(top-level * 2 0) SOLVED (!)
+<br>
+(top-level * 3 0) ****** (p1 _9) trace ?y
+<br>
+(top-level * 3 0) SOLVED (p1 1)
+<br>
+(top-level * 4 0) ****** (fail)
+<br>
+(top-level * 4 0) FAILED (fail)
+<br>
+(p1 2 1 1) ****** (!)
+<br>
+(p1 2 1 1) SOLVED (!)
+<br>
+(top-level * 3 0) SOLVED (p1 2)
+<br>
+(top-level * 4 0) ****** (fail)
+<br>
+(top-level * 4 0) FAILED (fail)
+<br>
+(p1 2 1 1) FAILED (!)
+<br>
+(top-level * 3 0) FAILED (p1 _9)
+<br>
+(top-level * 2 0) FAILED (!)
+<br>
+&nbsp;
+</p>
+<p>The cut improves efficiency
+</p>
+<p>(class N C)&nbsp; holds if N is number in the class C, where C can
+be
+"positive" , "zero" , or "negative":
+</p>
+<p><b><font color="#3333ff">((class N positive)(less 0 N))</font></b>
+<br>
+<b><font color="#3333ff">((class 0 zero))</font></b>
+<br>
+<b><font color="#3333ff">((class N negative)(negg eq N 0)(negg less
+0 N))</font></b>
+<br>
+&nbsp;
+</p>
+<blockquote><font color="#009900">(i) </font>Try and trace various
+queries
+on this predicate and see how it works.
+  <br>
+  <font color="#009900">(ii)</font> Also try to shuffle the order of
+these clauses.</blockquote>
+Now, a more efficient version
+<p>((class_cut N C)) same as (class N C) using the cut:
+</p>
+<p><b><font color="#3366ff">((class_cut N positive)(less 0 N)(!))</font></b>
+<br>
+<b><font color="#3366ff">((class_cut 0 zero)(!))</font></b>
+<br>
+<b><font color="#3366ff">((class_cut N negative))</font></b>
+</p>
+<p>Now do (i) and (ii) above for class_cut.
+<br>
+&nbsp;
+</p>
+<p>Using the cut-fail combination.
+</p>
+<p>The cut-fail combination can be used to define the negation
+predicate.
+</p>
+<p>Let (my_neg P) hold if the&nbsp; query P to a predicate specified in
+P fails.
+</p>
+<p>That is
+</p>
+<p><b><font color="#3333ff">((my_neg P)P(!)(fail))&nbsp; </font></b><i><font
+ color="#cc66cc">%
+fail when P succeeds</font></i>
+<br>
+<b><font color="#3333ff">((my_neg&nbsp;&nbsp;&nbsp;&nbsp; _&nbsp; ))
+</font></b><i><font color="#cc33cc">%otherwise succeed</font></i>
+</p>
+<p><b><font color="#000000">Fril &gt;</font><font color="#ff0000">tq((my_neg
+(p1 1)))</font></b>
+</p>
+<p><font color="#000000">Starting Fril Trace - header gives
+(Clause-name
+Index Nth-goal-in-body Depth)</font>
+</p>
+<p><font color="#000000">(top-level * 1 0) ****** (my_neg (p1 1)) trace
+?y</font>
+<br>
+<font color="#000000">(my_neg 1 1 1) ****** (p1 1) trace ?y</font>
+<br>
+<font color="#000000">(my_neg 1 1 1) SOLVED (p1 1)</font>
+<br>
+<font color="#000000">(my_neg 1 2 1) ****** (!)</font>
+<br>
+<font color="#000000">(my_neg 1 2 1) SOLVED (!)</font>
+<br>
+<font color="#000000">(my_neg 1 3 1) ****** (fail)</font>
+<br>
+<font color="#000000">(my_neg 1 3 1) FAILED (fail)</font>
+<br>
+<font color="#000000">(my_neg 1 2 1) FAILED (!)</font>
+<br>
+<font color="#000000">(top-level * 1 0) FAILED (my_neg (p1 1)) - try
+again: n(default), y or q ?n</font>
+<br>
+&nbsp;
+<br>
+&nbsp;
+</p>
+<p><b><font color="#000000">Fril &gt;</font><font color="#ff0000">tq((my_neg
+(p1 4) ))</font></b>
+</p>
+<p><font color="#000000">Starting Fril Trace - header gives
+(Clause-name
+Index Nth-goal-in-body Depth)</font>
+</p>
+<p><font color="#000000">(top-level * 1 0) ****** (my_neg (p1 4)) trace
+?y</font>
+<br>
+<font color="#000000">(my_neg 1 1 1) ****** (p1 4) trace ?y</font>
+<br>
+<font color="#000000">(my_neg 1 1 1) FAILED (p1 4) - unification failed</font>
+<br>
+<font color="#000000">(top-level * 1 0) SOLVED (my_neg (p1 4))</font>
+</p>
+<p><font color="#000000">Exercise:</font>
+</p>
+<p><font color="#000000">Write a predicate <b>my_negg</b>&nbsp; which
+acts
+as the builtin predicate <b>negg</b>, that is,</font>
+<br>
+<font color="#000000"><b>my_negg</b> takes a variable number of
+arguments
+the first of which is the name of a predicate which is tobe applied to
+the remaining arguments.</font>
+<br>
+&nbsp;
+</p>
+<p><font color="#3366ff">The builtin predicate <b>findall</b></font>
+</p>
+<p><font color="#000000">Fril &gt;</font><b><font color="#ff0000">?((findall
+X ((p1 X)) L)(pp L))</font></b>
+<br>
+<font color="#000000">(1 2)</font>
+</p>
+<p><font color="#000000">see how it works:</font>
+</p>
+<p><font color="#000000">Fril &gt;</font><b><font color="#ff0000">tq((findall
+X ((p1 X)) L))</font></b>
+</p>
+<p><font color="#000000">Starting Fril Trace - header gives
+(Clause-name
+Index Nth-goal-in-body Depth)</font>
+</p>
+<p><font color="#000000">(top-level * 1 0) ****** (findall _3 ((p1 _3))
+_9) trace ?y</font>
+<br>
+<font color="#000000">&nbsp;&nbsp;&nbsp; ** finding all _3 such that
+((p1 _3)) **</font>
+<br>
+<font color="#000000">(findall * 1 1) ****** (p1 _3) trace ?y</font>
+<br>
+<font color="#000000">(findall * 1 1) SOLVED (p1 1)</font>
+<br>
+<font color="#000000">&nbsp;&nbsp;&nbsp; ** solution 1 found **</font>
+<br>
+<font color="#000000">(p1 2 1 2) ****** (!)</font>
+<br>
+<font color="#000000">(p1 2 1 2) SOLVED (!)</font>
+<br>
+<font color="#000000">(findall * 1 1) SOLVED (p1 2)</font>
+<br>
+<font color="#000000">&nbsp;&nbsp;&nbsp; ** solution 2 found **</font>
+<br>
+<font color="#000000">(p1 2 1 2) FAILED (!)</font>
+<br>
+<font color="#000000">(findall * 1 1) FAILED (p1 _3)</font>
+<br>
+<font color="#000000">&nbsp;&nbsp;&nbsp; ** no more solutions for
+findall
+**</font>
+<br>
+<font color="#000000">(top-level * 1 0) SOLVED (findall _3 ((p1 _3))
+(1 2))</font>
+<br>
+&nbsp;
+</p>
+<p><font color="#000000">Exercise: write your own findall : <b>my_findall</b></font>
+<br>
+&nbsp;
+<br>
+&nbsp;
+<br>
+</p>
+<center>
+<p><b><font color="#990000">NEGATION AS FAILURE</font></b></p>
+</center>
+<p><br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+</p>
+<p><font color="#000000">The previous examples have illustrated the way
+negation is defined in prolog/Fril: </font><b><font color="#ff0000">to
+say that something IS NOT TRUE use the special builtin predicate fail
+which
+always fails and thus forces the parent predicate (the calling
+predicate)
+to fail as well.</font></b>
+</p>
+<p><font color="#000000">For example:</font>
+</p>
+<p><font color="#000000">"Ann likes all animals except snakes"</font>
+</p>
+<p><b><font color="#3333ff">((likes Ann X)(snake X)(!)(fail))</font></b>
+<br>
+<b><font color="#3333ff">((likes Ann X)(animal X))</font></b>
+</p>
+<p><font color="#000000">using the bip negg this would be written as:</font>
+</p>
+<p><b><font color="#3333ff">((likes Ann X)(animal X)(negg snake X))</font></b>
+</p>
+<p><font color="#000000">"Ann likes everything except snakes"</font>
+</p>
+<p><b><font color="#3333ff">((likes Ann X)(snake X)(!)(fail))</font></b>
+<br>
+<b><font color="#3333ff">((likes Ann _ ))</font></b>
+</p>
+<p><font color="#000000">using the bip negg this would be written as:</font>
+</p>
+<p><b><font color="#3333ff">((likes Ann X)(negg snake X))</font></b>
+<br>
+&nbsp;
+<br>
+&nbsp;
+<br>
+</p>
+<center>
+<p><b><font color="#993300">ADVANCED LIST PROCESSING PREDICATES</font></b></p>
+</center>
+<p>Maximum element in a list:
+</p>
+<p><b>(max_list M L) holds if M </b>is the largest element in the list
+L; It makes use of the predicate (max X Y M) which holds when M is the
+largest of X and Y; if X=Y then M is also X (or Y).
+</p>
+<p><b><font color="#3366ff">((max1 X Y M)(eq X Y)(eq M X))</font></b>
+</p>
+<p><b><font color="#3366ff">((max1 X Y M)(less X Y)(eq M Y))</font></b>
+</p>
+<p><b>((max1 X Y M)(negg less X Y)(eq M X))
+</b>Note the strong procedural
+flavor of this predicate. It is not a good Fril definition even though
+it will behave correctly.
+</p>
+<p><font color="#ff0000">Fril &gt;<b> ?((max1 2 2 M)(pp M))</b></font>
+</p>
+<p>2
+</p>
+<p><font color="#ff0000">Fril &gt;<b> ?((max1 2 X M)(pp X M))</b></font>
+</p>
+<p>2
+</p>
+<p>2
+</p>
+<p>yes
+</p>
+<p><font color="#ff6666">Fril &gt;<b>?((max1 2 X M)(pp)(p X M)(fail))</b></font>
+</p>
+<p>2 2
+</p>
+<p><b>less:</b>&nbsp; built in predicate, needs number or constant for
+both arguments
+</p>
+<p>(less 2 _3)
+</p>
+<p>(failing goal)
+</p>
+<p><font color="#ff6666">Fril &gt;<b> ?((max1 2 3 M)(p M))</b></font>
+</p>
+<p>3
+</p>
+<p>yes
+</p>
+<p><font color="#ff6666">Fril &gt;<b> ?((max1 5 0 M)(p M))</b></font>
+</p>
+<p>5
+</p>
+<p>yes
+</p>
+<p><font color="#ff6666">Fril &gt;<b>tq((max1 5 1 M))</b></font>
+</p>
+<p>Starting Fril Trace - header gives (Clause-name Index
+Nth-goal-in-body
+Depth)
+</p>
+<p>(top-level * 1 0) ****** (max1 5 1 _3) trace ?y
+</p>
+<p>(max1 1 1 1) ****** (eq 5 1)
+</p>
+<p>(max1 1 1 1) FAILED (eq 5 1)
+</p>
+<p>(max1 2 1 1) ****** (less 5 1)
+</p>
+<p>(max1 2 1 1) FAILED (less 5 1)
+</p>
+<p>(max1 3 1 1) ****** (negg less 5 1) trace ?n
+</p>
+<p>(max1 3 1 1) SOLVED (negg less 5 1)
+</p>
+<p>(max1 3 2 1) ****** (eq _3 5)
+</p>
+<p>(max1 3 2 1) SOLVED (eq 5 5)
+</p>
+<p>(top-level * 1 0) SOLVED (max1 5 1 5)
+</p>
+<p>yes
+</p>
+<p>Better definition:
+</p>
+<p><b><font color="#3366ff">((max2 X X X))</font></b>
+</p>
+<p><b><font color="#3366ff">((max2 X Y Y)(less X Y))</font></b>
+</p>
+<p><b><font color="#3366ff">((max2 X Y X)(negg less X Y))</font></b>
+</p>
+<p><font color="#ff6666">Fril &gt;<b> tq((max2 5 1 M))</b></font>
+</p>
+<p>Starting Fril Trace - header gives (Clause-name Index
+Nth-goal-in-body
+Depth)
+</p>
+<p>(top-level * 1 0) ****** (max2 5 1 _3) trace ?y
+</p>
+<p>(max2 2 1 1) ****** (less 5 1)
+</p>
+<p>(max2 2 1 1) FAILED (less 5 1)
+</p>
+<p>(max2 3 1 1) ****** (negg less 5 1) trace ?n
+</p>
+<p>(max2 3 1 1) SOLVED (negg less 5 1)
+</p>
+<p>(top-level * 1 0) SOLVED (max2 5 1 5)
+</p>
+<p>yes
+</p>
+<p><font color="#ff6666">Fril &gt;<b> tq((max1 2 2 M))</b></font>
+</p>
+<p>Starting Fril Trace - header gives (Clause-name Index
+Nth-goal-in-body
+Depth)
+</p>
+<p>(top-level * 1 0) ****** (max1 2 2 _3) trace ?y
+</p>
+<p>(max1 1 1 1) ****** (eq 2 2)
+</p>
+<p>(max1 1 1 1) SOLVED (eq 2 2)
+</p>
+<p>(max1 1 2 1) ****** (eq _3 2)
+</p>
+<p>(max1 1 2 1) SOLVED (eq 2 2)
+</p>
+<p>(top-level * 1 0) SOLVED (max1 2 2 2)
+</p>
+<p>yes
+</p>
+<p><font color="#ff6666">Fril &gt;<b> tq((max2 2 2 M))</b></font>
+</p>
+<p>Starting Fril Trace - header gives (Clause-name Index
+Nth-goal-in-body
+Depth)
+</p>
+<p>(top-level * 1 0) ****** (max2 2 2 _3) trace ?y
+</p>
+<p>(top-level * 1 0) SOLVED (max2 2 2 2)
+</p>
+<p>yes
+</p>
+<p><font color="#006600">Still not good enough: when the third clause
+is
+tried the system should know already that it is not rue that X &lt; Y.</font>
+</p>
+<p><font color="#ff6666">Fril &gt;tq((max2 5 1 M))</font>
+</p>
+<p>Starting Fril Trace - header gives (Clause-name Index
+Nth-goal-in-body
+Depth)
+</p>
+<p>(top-level * 1 0) ****** (max2 5 1 _3) trace ?y
+</p>
+<p>(max2 2 1 1) ****** (less 5 1)
+</p>
+<p>(max2 2 1 1) FAILED (less 5 1)
+</p>
+<p>(max2 3 1 1) ****** (negg less 5 1) trace ?y
+</p>
+<p>** unnegated **
+</p>
+<p>(negg * 1 2) ****** (less 5 1)
+</p>
+<p>(negg * 1 2) FAILED (less 5 1)
+</p>
+<p>** unnegated FAILED so :
+</p>
+<p>(max2 3 1 1) SOLVED (negg less 5 1)
+</p>
+<p>(top-level * 1 0) SOLVED (max2 5 1 5)
+</p>
+<p>yes
+</p>
+<p>If we just remove (negg less X Y) from the last clause the resulting
+predicate will not work correctly:
+</p>
+<p><font color="#3366ff">((max3 X X X))</font>
+</p>
+<p><font color="#3366ff">((max3 X Y Y)(less X
+Y))&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+WRONG DEFINITION!!!!!</font>
+</p>
+<p><font color="#3366ff">((max3 X Y X))</font>
+</p>
+<p><font color="#ff6666">Fril &gt;?((max 2 2 M)(fail))</font>
+</p>
+<p>no
+</p>
+<p><font color="#ff6666">Fril &gt;?((max3 2 2 M)(pp M)(fail))</font>
+</p>
+<p>2
+</p>
+<p>2
+</p>
+<p>no
+</p>
+<p><font color="#ff6666">Fril &gt;?((max3 2 3 M)(pp M)(fail))</font>
+</p>
+<p>3
+</p>
+<p>2
+</p>
+<p>no
+</p>
+<p><font color="#ff6666">Fril &gt;tq((max3 2 3 M)(fail))</font>
+</p>
+<p>Starting Fril Trace - header gives (Clause-name Index
+Nth-goal-in-body
+Depth)
+</p>
+<p>(top-level * 1 0) ****** (max3 2 3 _3) trace ?y
+</p>
+<p>(max3 2 1 1) ****** (less 2 3)
+</p>
+<p>(max3 2 1 1) SOLVED (less 2 3)
+</p>
+<p>(top-level * 1 0) SOLVED (max3 2 3 3)
+</p>
+<p>(top-level * 2 0) ****** (fail)
+</p>
+<p>(top-level * 2 0) FAILED (fail)
+</p>
+<p>(max3 2 1 1) FAILED (less 2 3)
+</p>
+<p>(top-level * 1 0) SOLVED (max3 2 3 2)
+</p>
+<p>(top-level * 2 0) ****** (fail)
+</p>
+<p>(top-level * 2 0) FAILED (fail)
+</p>
+<p>(top-level * 1 0) FAILED (max3 2 3 _3)
+</p>
+<p>no
+</p>
+<p>So, we must introduce a cut such that the third clause will be
+prevented
+when the second has already succeeded.
+</p>
+<p><b><font color="#3366ff">((max4 X X X))</font></b>
+</p>
+<p><b><font color="#3366ff">((max4 X Y Y)(!)(less X Y))</font></b>
+</p>
+<p><b><font color="#3366ff">((max4 X Y X))</font></b>
+</p>
+<p><font color="#ff6666">Fril &gt;<b> tq((max4 2 2 M))</b></font>
+</p>
+<p>Starting Fril Trace - header gives (Clause-name Index
+Nth-goal-in-body
+Depth)
+</p>
+<p>(top-level * 1 0) ****** (max4 2 2 _3) trace ?y
+</p>
+<p>(top-level * 1 0) SOLVED (max4 2 2 2)
+</p>
+<p>yes
+</p>
+<p><font color="#ff6666">Fril &gt;<b> tq((max4 2 3 M))</b></font>
+</p>
+<p>Starting Fril Trace - header gives (Clause-name Index
+Nth-goal-in-body
+Depth)
+</p>
+<p>(top-level * 1 0) ****** (max4 2 3 _3) trace ?y
+</p>
+<p>(max4 2 1 1) ****** (less 2 3)
+</p>
+<p>(max4 2 1 1) SOLVED (less 2 3)
+</p>
+<p>(max4 2 2 1) ****** (!)
+</p>
+<p>(max4 2 2 1) SOLVED (!)
+</p>
+<p>(top-level * 1 0) SOLVED (max4 2 3 3)
+</p>
+<p>yes
+</p>
+<p><font color="#ff6666">Fril &gt;<b> tq((max4 5 1 M))</b></font>
+</p>
+<p>Starting Fril Trace - header gives (Clause-name Index
+Nth-goal-in-body
+Depth)
+</p>
+<p>(top-level * 1 0) ****** (max4 5 1 _3) trace ?y
+</p>
+<p>(max4 2 1 1) ****** (less 5 1)
+</p>
+<p>(max4 2 1 1) FAILED (less 5 1)
+</p>
+<p>(top-level * 1 0) SOLVED (max4 5 1 5)
+</p>
+<p>yes
+</p>
+<p><b><font color="#ff6666">Fril &gt;tq((max4 2 2 M)(fail))</font></b>
+</p>
+<p>Starting Fril Trace - header gives (Clause-name Index
+Nth-goal-in-body
+Depth)
+</p>
+<p>(top-level * 1 0) ****** (max4 2 2 _3) trace ?y
+</p>
+<p>(top-level * 1 0) SOLVED (max4 2 2 2)
+</p>
+<p>(top-level * 2 0) ****** (fail)
+</p>
+<p>(top-level * 2 0) FAILED (fail)
+</p>
+<p>(max4 2 1 1) ****** (less 2 2)
+</p>
+<p>(max4 2 1 1) FAILED (less 2 2)
+</p>
+<p>(top-level * 1 0) SOLVED (max4 2 2 2)
+</p>
+<p>(top-level * 2 0) ****** (fail)
+</p>
+<p>(top-level * 2 0) FAILED (fail)
+</p>
+<p>(top-level * 1 0) FAILED (max4 2 2 _3)
+</p>
+<p>no
+</p>
+<p><font color="#009900"><font size="+1">Now this will work (almost)
+correctly
+but we can still improve its efficiency by including a cut after the
+first
+clause, to obtain :</font></font>
+</p>
+<p><font color="#3366ff"><b>((max X X X)(!))</b> <i>% max of two equal
+values is their common value</i></font>
+</p>
+<p><font color="#3366ff"><b>((max X Y Y)(less X Y)(!)) </b><i>% max of
+two unequal values is the largest of these</i></font>
+</p>
+<p><b><font color="#3366ff">((max X Y X))</font></b>
+</p>
+<p><font color="#ff6666">Fril &gt;<b> tq((max 2 2 M)(fail))</b></font>
+</p>
+<p>Starting Fril Trace - header gives (Clause-name Index
+Nth-goal-in-body
+Depth)
+</p>
+<p>(top-level * 1 0) ****** (max 2 2 _3) trace ?y
+</p>
+<p>(max 1 1 1) ****** (!)
+</p>
+<p>(max 1 1 1) SOLVED (!)
+</p>
+<p>(top-level * 1 0) SOLVED (max 2 2 2)
+</p>
+<p>(top-level * 2 0) ****** (fail)
+</p>
+<p>(top-level * 2 0) FAILED (fail)
+</p>
+<p>(max 1 1 1) FAILED (!)
+</p>
+<p>(top-level * 1 0) FAILED (max 2 2 _3)
+</p>
+<p>no
+</p>
+<p><font color="#009900"><font size="+1">However, this predicate will
+give
+the wrong answer in the following query:</font></font>
+</p>
+<p><font color="#ff6666">Fril &gt;<b> ?((max 2 5 2))</b></font>
+</p>
+<p>yes
+</p>
+<p>Trace it to see why.
+</p>
+<p>To write a correct max predicate we define (less_than_eq X Y):
+</p>
+<p>/* (less_than_eq X Y) holds if X is less than Y */
+</p>
+<p><b><font color="#3366ff">((less_than_eq X X))</font></b>
+</p>
+<p><b><font color="#3366ff">((less_than_eq X Y) (less X Y))</font></b>
+</p>
+<p><font color="#ff6666">Fril &gt;<b> ?((less_than_eq X X))</b></font>
+</p>
+<p>yes
+</p>
+<p><font color="#ff6666">Fril &gt;<b> ((less_than_eq 2 3))</b></font>
+</p>
+<p>yes
+</p>
+<p><font color="#ff6666">Fril &gt;<b> ?((less_than_eq 3 2))</b></font>
+</p>
+<p>no
+</p>
+<p>A similar predicate one can write for min, or one can use max to
+write
+the min predicate:
+</p>
+<p>Now we write the final max predicate:
+</p>
+<p><b><font color="#3366ff">((Max X Y Y)</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(less_than_eq X Y)</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(!))</font></b>
+</p>
+<p><b><font color="#3366ff">((Max X Y X)</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(less_than_eq Y X))</font></b>
+</p>
+<p><b><font color="#ff6666">Fril &gt;?((Max 2 5 2))</font></b>
+</p>
+<p>no
+</p>
+<p><b><font color="#ff6666">Fril &gt;?((Max 5 2 2))</font></b>
+</p>
+<p>no
+</p>
+<p><b><font color="#ff0000">Fril &gt;?((Max 2 5 5))</font></b>
+</p>
+<p>yes
+</p>
+<p><b><font color="#ff0000">Fril &gt;?((Max 5 2 5))</font></b>
+</p>
+<p>yes
+</p>
+<p><b><font color="#ff0000">Fril &gt;?((Max 5 2 X)(pp X))</font></b>
+</p>
+<p>5
+</p>
+<p>yes
+</p>
+<p><b><font color="#ff0000">Fril &gt;?((Max 2 5 X)(pp X))</font></b>
+</p>
+<p>5
+</p>
+<p>yes
+</p>
+<p><b>ORDERED LIST</b>
+</p>
+<p>/* (ordered L) holds if L is ordered in increasing order ; the empty
+list is always ordered; the list with one element is always ordered */
+</p>
+<p><b><font color="#3366ff">((ordered ()))</font></b>
+</p>
+<p><b><font color="#3366ff">((ordered (_)))</font></b>
+</p>
+<p><b><font color="#3366ff">((ordered (E1 E2 |T))</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(less_than_eq E1 E2)</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(ordered (E2|T)))</font></b>
+</p>
+<p>/* (ordered_dec L) if L is ordered in decreasing order: its reverse
+is ordered in increasing order */
+</p>
+<p><b><font color="#3366ff">((ordered_dec L)</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(reverse L L1)</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(ordered L1))</font></b>
+</p>
+<p>We can also define directly in the same way as we defined ordered
+(study
+this).
+</p>
+<p>In Fril (but not in all of the other prolog systems we can use 2nd
+order
+definitions, that is, with variables for predicate names)
+</p>
+<p>/* ((ordered L P)) holds if the elements of L are arranged in the
+order
+specified by the predicate P */
+</p>
+<p>((ordered L less_than_eq)): list is in increasing order
+</p>
+<p>((ordered L less)): list is in strictly increasing order
+</p>
+<p>((ordered L greater_than_eq)): list is decreasing order
+</p>
+<p>((ordered L greater)): list is in strictly decreasing order
+</p>
+<p><font color="#3366ff"><b>((ordered () _ )) </b><i>% the empty list
+is
+ordered in ANY order</i></font>
+</p>
+<p><font color="#3366ff"><b>((ordered (_) _ )) </b><i>% the list with
+one
+element is ordered in ANY order</i></font>
+</p>
+<p><b><font color="#3366ff">((ordered (E1 E2 |T) ORDER )</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(ORDER E1 E2)</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(ordered (E2|T) ORDER ))</font></b>
+</p>
+<center>
+<p><b><u><font color="#990000">SORTING OF LISTS</font></u></b></p>
+</center>
+<p><b>- bubble sort</b>: move the largest/smallest element at its
+correct
+position: when two elements are not in the correct relation in the list
+they are swapped.Eventually, after sufficient passes through the list
+the
+list will be sorted.
+</p>
+<p><b>- insertion sort</b>: insert each element of the list in its
+proper
+position in the list
+</p>
+<p><b>- merge sort</b>: split the list in two halves, sort these and
+merge
+the resulting lists
+</p>
+<p><b>- quick sort</b>: split the list into two lists: less than the
+head
+, and greater than or equal to the head of the list; sort these and
+merge
+results.
+</p>
+<center>
+<p><b><font color="#660000">BUBBLE SORT</font></b></p>
+</center>
+<p><b><font color="#3366ff">((greater_than X Y)</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(less Y X))</font></b>
+</p>
+<p>/*swap the first two elements if they are not in order*/
+</p>
+<p><b><font color="#3366ff">((swap (X Y|T) (Y X | T))</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(greater_than X Y))</font></b>
+</p>
+<p>/* swap elements in the tail */
+</p>
+<p><b><font color="#3366ff">((swap (H | T) (H | T1))</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(swap T T1))</font></b>
+</p>
+<p>Note that swap assumes that it will never be called on the empty
+list
+</p>
+<p><b><font color="#3366ff">((bubble_sort L SL)</font></b>
+<br>
+<font color="#3366ff"><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(swap L L1) </b><i>% at least one swap is needed</i></font>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(!)</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(bubble_sort L1 SL))</font></b>
+</p>
+<p><font color="#3366ff"><b>((bubble_sort L L)) </b><i>% the list is
+already
+sorted</i></font>
+</p>
+<center>
+<p><b><font color="#660000">INSERTION SORT</font></b></p>
+</center>
+<p>/*(insert E SL SLE) holds when SLE is the list obtained
+<br>
+by inserting the element E in the sorted list SL */
+</p>
+<p><i><font color="#3366ff">% an element smaller than H is inserted at
+the front of the list</font></i>
+</p>
+<p><b><font color="#3366ff">((insert X () (X)))</font></b>
+</p>
+<p><b><font color="#3366ff">((insert E (H | T) (E H | T1))</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(less_than_eq E H)</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(!))</font></b>
+</p>
+<p><b><font color="#3366ff">((insert E (H|T) (H|T1))</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(insert E T T1))</font></b>
+<br>
+&nbsp;
+</p>
+<p><b><i><font color="#993399">/* insertion sort makes use of insert */</font></i></b>
+<br>
+<font color="#3366ff"><b>((insertion_sort () ())) </b><i>% the empty
+list is sorted</i></font>
+</p>
+<p><font color="#3366ff"><b>((insertion_sort (H|T) SORTED) </b><i>%
+insert
+the head of the list into the sorted</i></font>
+<br>
+<font color="#3366ff"><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(insertion_sort T T1) </b><i>% tail of the list</i></font>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(insert H T1 SORTED))</font></b>
+<br>
+&nbsp;
+</p>
+<p><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<font color="#cc66cc">MERGE SORT</font></b>
+</p>
+<p>/*
+<br>
+((merge L1 L2 L)) holds when L is obtained from interleaving
+<br>
+the elements of the sorted lists L1 and L2
+<br>
+*/
+</p>
+<p><b><font color="#3366ff">((merge () L L))</font></b>
+</p>
+<p><b><font color="#3366ff">((merge L () L))</font></b>
+</p>
+<p><b><font color="#3366ff">((merge (H1|T1) (H2 | T2) (H1|T))</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(less_than_eq H1 H2)(!)</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(merge T1 (H2|T2) T))</font></b>
+</p>
+<p><b><font color="#3366ff">((merge (H1|T1) (H2|T2) (H2|T))</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(merge (H1|T1 T2 T))</font></b>
+<br>
+&nbsp;
+</p>
+<p>/*
+<br>
+((merge_sort L SL)) holds when SL is the sorted version of L obtained
+<br>
+using merge sort: L is halved, its halves are merge-sorted, and the
+results
+<br>
+are merged
+<br>
+*/
+<br>
+&nbsp;
+</p>
+<p><font color="#3366ff"><b>((merge_sort () ()))&nbsp;&nbsp; </b><i>%
+the
+empy list is sorted</i></font>
+</p>
+<p><b><font color="#3366ff">((merge_sort L SL)</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(split_in_half L L1 L2)</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(merge_sort L1 S1)</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(merge_sort L2 S2)</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(merge S1 S2 SL))</font></b>
+</p>
+<p><b><font color="#3366ff">/* ((split_in_half L L1 L2)) holds if L1
+and
+L2 are the (approximate) halves of the list L; order of elements is
+preserved
+*/</font></b>
+<br>
+click <a href="split_in_half">here</a> for its definition
+</p>
+<p><b><font color="#993300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+QUICK SORT</font></b>
+</p>
+<p>/* 1. Split the list into two lists: L1: elements less than the
+head;
+L2: the remaining elements. */
+</p>
+<p><b><font color="#3366ff">((split _ () () ()))</font></b>
+</p>
+<p><b><font color="#3366ff">((split X (H|T) (H | SMALL) BIG) (less H X
+)(!) (split X T SMALL BIG))</font></b>
+</p>
+<p><b><font color="#3366ff">((split X (H|T) SMALL (H | BIG))</font></b>
+</p>
+<p>/* 2. quicksort:
+</p>
+<p><b><font color="#3366ff">((quicksort (H | T) SORTED)</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(split X T SMALL BIG)</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(quicksort SMALL S)</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(quicksort BIG B)</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(append S (H|B) SORTED))</font></b>
+</p>
+</body>
+</html>

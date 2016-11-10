@@ -1,0 +1,286 @@
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=iso-8859-1">
+  <meta name="GENERATOR"
+ content="Mozilla/4.79 [en] (X11; U; SunOS 5.8 sun4u) [Netscape]">
+  <title>LECTURE PACKET 5</title>
+</head>
+<body bgcolor="#ffffdf">
+<center style="color: rgb(51, 51, 255);"><big><big><b>Sorting Algorithms<br>
+<a href="Lecture6_small_print.html"><small>small print</small></a><br>
+</b></big></big></center>
+<p><br>
+</p>
+<p><b>ORDERED LIST</b>
+</p>
+<p>/* (ordered L) holds if L is ordered in increasing order ; the empty
+list is always ordered; the list with one element is always ordered */
+</p>
+<p><b><font color="#3366ff">((ordered ()))</font></b>
+</p>
+<p><b><font color="#3366ff">((ordered (_)))</font></b>
+</p>
+<p><b><font color="#3366ff">((ordered (E1 E2 |T))</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(less_than_eq E1 E2)</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(ordered (E2|T)))</font></b>
+</p>
+<p>/* (ordered_dec L) if L is ordered in decreasing order: its reverse
+is ordered in increasing order */
+</p>
+<p><b><font color="#3366ff">((ordered_dec L)</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(reverse L L1)</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(ordered L1))</font></b>
+</p>
+<p>We can also define directly in the same way as we defined ordered
+(study
+this).
+</p>
+<p>In Fril (but not in all of the other prolog systems we can use 2nd
+order
+definitions, that is, with variables for predicate names)
+</p>
+<p>/* ((ordered L P)) holds if the elements of L are arranged in the
+order
+specified by the predicate P */
+</p>
+<p>((ordered L less_than_eq)): list is in increasing order
+</p>
+<p>((ordered L less)): list is in strictly increasing order
+</p>
+<p>((ordered L greater_than_eq)): list is decreasing order
+</p>
+<p>((ordered L greater)): list is in strictly decreasing order
+</p>
+<p><font color="#3366ff"><b>((ordered () _ )) </b><i>% the empty list
+is
+ordered in ANY order</i></font>
+</p>
+<p><font color="#3366ff"><b>((ordered (_) _ )) </b><i>% the list with
+one
+element is ordered in ANY order</i></font>
+</p>
+<p><b><font color="#3366ff">((ordered (E1 E2 |T) ORDER )</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(ORDER E1 E2)</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(ordered (E2|T) ORDER ))</font></b>
+</p>
+<p><b>SORTING OF LISTS:</b>
+</p>
+<p><b>- bubble sort</b>: move the largest/smallest element at its
+correct
+position: when two elements are not in the correct relation in the list
+they are swapped.Eventually, after sufficient passes through the list
+the
+list will be sorted.
+</p>
+<p><b>- insertion sort</b>: insert each element of the list in its
+proper
+position in the list
+</p>
+<p><b>- merge sort</b>: split the list in two halves, sort these and
+merge
+the resulting lists
+</p>
+<p><b>- quick sort</b>: split the list into two lists: less than the
+head
+, and greater than or equal to the head of the list; sort these and
+merge
+results.
+</p>
+<p><b>BUBBLE SORT</b>
+</p>
+<p><b><font color="#3366ff">((greater_than X Y)</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(less Y X))</font></b>
+</p>
+<p>/*swap the first two elements if they are not in order*/
+</p>
+<p><b><font color="#3366ff">((swap (X Y|T) (Y X | T))</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(greater_than X Y))</font></b>
+</p>
+<p>/* swap elements in the tail */
+</p>
+<p><b><font color="#3366ff">((swap (H | T) (H | T1))</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(swap T T1))</font></b>
+</p>
+<p>Note that swap assumes that it will never be called on the empty
+list
+</p>
+<p><b><font color="#3366ff">((bubble_sort L SL)</font></b>
+<br>
+<font color="#3366ff"><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(swap L L1) </b><i>% at least one swap is needed</i></font>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(!)</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(bubble_sort L1 SL))</font></b>
+</p>
+<p><font color="#3366ff"><b>((bubble_sort L L)) </b><i>% the list is
+already
+sorted</i></font>
+</p>
+<p><b>INSERTION SORT</b>
+</p>
+<p>/*(insert E SL SLE) holds when SLE is the list obtained
+<br>
+by inserting the element E in the sorted list SL */
+</p>
+<p><i><font color="#3366ff">% an element smaller than H is inserted at
+the front of the list</font></i>
+</p>
+<p><b><font color="#3366ff">((insert X () (X)))</font></b>
+</p>
+<p><b><font color="#3366ff">((insert E (H | T) (E H | T1))</font></b>
+</p>
+<p><b><font color="#3366ff">less_than_eq E H)(!))</font></b>
+</p>
+<p><b><font color="#3366ff">((insert E (H|T) (H|T1))</font></b>
+</p>
+<p><b><font color="#3366ff">(insert E T T1))</font></b>
+</p>
+<p><font color="#3366ff"><b>((insertion_sort () ())) </b><i>% the
+empty
+list is sorted</i></font>
+</p>
+<p><font color="#3366ff"><b>((insertion_sort (H|T) SORTED) </b><i>%
+insert
+the head of the list into the sorted</i></font>
+</p>
+<p><font color="#3366ff"><b>(insertion_sort T T1) </b><i>% tail of the
+list</i></font>
+</p>
+<p><b><font color="#3366ff">(insert H T1 SORTED))</font></b>
+<br>
+&nbsp;
+</p>
+<p><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<font color="#cc66cc">MERGE SORT</font></b>
+</p>
+<p>/*
+<br>
+((merge L1 L2 L)) holds when L is obtained from interleaving
+<br>
+the elements of the sorted lists L1 and L2
+<br>
+*/
+</p>
+<p><b><font color="#3366ff">((merge () L L))</font></b>
+</p>
+<p><b><font color="#3366ff">((merge L () L))</font></b>
+</p>
+<p><b><font color="#3366ff">((merge (H1|T1) (H2 | T2) (H1|T))</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(less_than_eq H1 H2)(!)</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(merge T1 (H2|T2) T))</font></b>
+</p>
+<p><b><font color="#3366ff">((merge (H1|T1) (H2|T2) (H2|T))</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(merge (H1|T1 T2 T))</font></b>
+<br>
+&nbsp;
+</p>
+<p>/*
+<br>
+((merge_sort L SL)) holds when SL is the sorted version of L obtained
+<br>
+using merge sort: L is halved, its halves are merge-sorted, and the
+results
+<br>
+are merged
+<br>
+*/
+<br>
+&nbsp;
+</p>
+<p><font color="#3366ff"><b>((merge_sort () ()))&nbsp;&nbsp; </b><i>%
+the
+empy list is sorted</i></font>
+</p>
+<p><b><font color="#3366ff">((merge_sort L SL)</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(split_in_half L L1 L2)</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(merge_sort L1 S1)</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(merge_sort L2 S2)</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(merge S1 S2 SL))</font></b>
+</p>
+<p><b><font color="#3366ff">((split_in_half (X) () (X))</font></b>
+</p>
+<p><b><font color="#3366ff">((split_in_half L L1 L2)</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(length L N)</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(division N 2 N1)</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(length L1 N1)</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(append L1 L2 L))</font></b>
+</p>
+<p>(division D I Q ) is a builtin predicate
+</p>
+<p><b><font color="#993300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+QUICK SORT</font></b>
+</p>
+<p>/* 1. Split the list into two lists: L1: elements less than the
+head;
+L2: the remaining elements. */
+</p>
+<p><b><font color="#3366ff">((split _ () () ()))</font></b>
+</p>
+<p><b><font color="#3366ff">((split X (H|T) (H | SMALL) BIG) (less H X
+)(!) (split X T SMALL BIG))</font></b>
+</p>
+<p><b><font color="#3366ff">((split X (H|T) SMALL (H | BIG))</font></b>
+</p>
+<p>/* 2. quicksort:
+</p>
+<p><b><font color="#3366ff">((quicksort (H | T) SORTED)</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(split X T SMALL BIG)</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(quicksort SMALL S)</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(quicksort BIG B)</font></b>
+<br>
+<b><font color="#3366ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(append S (H|B) SORTED))</font></b>
+</p>
+</body>
+</html>

@@ -1,0 +1,356 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="content-type">
+  <title>Search11</title>
+</head>
+<body>
+<p>Remark: Note that the above search builds the path in depth first
+order.
+</p>
+<p>To find all solutions:
+</p>
+<p>/* ( solve_all&nbsp; S G) holds if it finds all solutions to the
+search
+problem from S to G
+</p>
+<p><b><font color="#3333ff">((solve_all S G))</font></b>
+<br>
+<b><font color="#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (kill goal)</font></b>
+<br>
+<b><font color="#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (addcl ((goal
+G)) )</font></b>
+<br>
+<b><font color="#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (wh (P&nbsp;
+(go S P (S)) )</font></b>
+<br>
+<b><font color="#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (delcl
+((goal G)) ))</font></b>
+</p>
+<p>Remarks:
+</p>
+<p>1.&nbsp; in the above implementation solve will output the paths but
+not collect them.&nbsp; One can use the bip findall to collect all of
+these
+paths into a list of paths, or for more efficiency to implement the
+behavior
+of findall (for our purpose we will not worry about such issues).
+</p>
+<p>2. The predicates kill, addcl, delcl are also bips - they are used
+to
+make sure that the correct goal state is specified in the knowledge
+base
+for each search.
+</p>
+<p>/* (solve_all_wfa S G)&nbsp; */
+</p>
+<p><b><font color="#3333ff">((solve_all_wfa S G SOLUTIONS)</font></b>
+<br>
+<b><font color="#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(kill goal)</font></b>
+<br>
+<b><font color="#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(addcl ((goal G)) )</font></b>
+<br>
+<b><font color="#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(findall P ((go S P (S))&nbsp; SOLUTIONS)</font></b>
+<br>
+<b><font color="#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(delcl ((goal G)) ))</font></b>
+</p>
+<p>However, even for moderate search problems execution of this
+predicate
+may run out of memory.
+</p>
+<p>A more reasonable predicate is (solve S P L) which is like go but in
+addition prints the path and prompts the user select if more paths are
+needed.
+</p>
+<p><b><font color="#3333ff">((solve S P L)</font></b>
+<br>
+<b><font color="#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(go S P L)</font></b>
+<br>
+<b><font color="#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</font><font color="#009900">(pp "solution is: ")</font></b>
+<br>
+<b><font color="#009900">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(pretty_print_solution P)</font></b>
+<br>
+<b><font color="#009900">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(get_user_input Y))</font></b>
+</p>
+<p><b><font color="#3333ff">((solve S P L)</font></b>
+<br>
+<b><font color="#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(print_end))</font></b>
+<br>
+&nbsp;
+</p>
+<p>where
+<br>
+/* pretty_print_solution.....
+<br>
+<b><font color="#009900">((pretty_print_solution () )(p success))</font></b>
+</p>
+<p><b><font color="#009900">((pretty_print_solution (H|T) )</font></b>
+<br>
+<b><font color="#009900">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(p H -&gt; )(pp)</font></b>
+<br>
+<b><font color="#009900">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(pretty_print T))</font></b>
+</p>
+<p><font color="#000000">/* print_end</font>
+<br>
+<b><font color="#009900">((print_end)(pp "no more solutions"))</font></b>
+<br>
+&nbsp;
+</p>
+<p><font color="#000000">/* get_user_input</font>
+<br>
+<b><font color="#009900">((get_user_input Y)</font></b>
+<br>
+<b><font color="#009900">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(p "more solutions? y or n")</font></b>
+<br>
+<b><font color="#009900">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(r Y)</font></b>
+<br>
+<b><font color="#009900">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(eq Y n))</font></b>
+</p>
+<p>The top level predicate for this search program will be a wrapping
+predicate:
+</p>
+<p><b><font color="#3333ff">((plan S G)</font></b>
+<br>
+<b><font color="#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(kill goal)</font></b>
+<br>
+<b><font color="#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(addcl ((goal G)) ))</font></b>
+<br>
+<b><font color="#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(solve S P (S) )</font></b>
+<br>
+<b><font color="#3333ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(delcl ((goal G)) ))</font></b>
+</p>
+<ul>
+&nbsp;
+</ul>
+Note the above search program finds the path in <b>depth first order</b>,
+that is the current node is expanded until either the solution (the
+goal
+has been found) or it caanot be expanded anymore, when the search will
+backtrack one level up etc.
+<br>
+&nbsp;
+<p><u>Remark: </u>The theorem prover may be implemented as a search
+program.
+</p>
+<p>We will consider the&nbsp; following small example
+</p>
+<p>((connect a b))
+<br>
+((connect a d))
+<br>
+((connect a f))
+</p>
+<p>((connect b c))
+<br>
+((connect b f))
+</p>
+<p>((connect d e))
+<br>
+((connect f e))
+</p>
+<p>((connect c e))
+</p>
+<p>((path X Y)(connect X Y))
+<br>
+((path X Y)(connect Y X))
+</p>
+<p>A list representation of this graph would use nested lists as
+follows:
+</p>
+<p>((a b d f) (b a c f) (c b e) (d e a) (e d c f) (f a b e) )
+</p>
+<p>Search strategies are compared according to:
+</p>
+<ul>
+  <li>time requirments</li>
+  <li>space requirments</li>
+</ul>
+These depend on the following quantities:
+<br>
+<b>m:</b> the maximum dpeth of the search tree
+<br>
+<b>d:</b> the depth of the solution
+<br>
+<b>b:</b> the branching factor:&nbsp; the average number of edged from
+a node
+<br>
+<b>l:&nbsp;</b> the depth limit of the search
+<p>Uninformed (blind) search strategies include:
+</p>
+<ul>
+  <li><big> <b><font color="#3333ff">depth first:</font></b></big></li>
+  <br>
+expands the current node before any of its siblings : expands the node
+at the deepest level of the tree. <br>
+In a general implementation, we would build a list of nodes, starting
+with the start node and expand the current node; the newly generated
+node
+would be put in front of the list. <br>
+To implement a depth first search from say b to e we need to:
+  <p>Find a list which starts with <b>b</b> and then follow throught
+expansions
+until we hit <b>e</b> .&nbsp; We use a list of "nodes to be expanded
+next".&nbsp;
+In depth first the node obtained at the most recent expansion is added
+in at the front of this list: </p>
+  <p>The path would be built in the following order: <br>
+&nbsp;
+  <table border="1" cols="2" width="100%" nosave="">
+    <tbody>
+      <tr>
+        <td>
+        <center><b>nodes</b></center>
+        </td>
+        <td>
+        <center><b>nodes to be expanded next</b></center>
+        </td>
+      </tr>
+      <tr>
+        <td>start node b</td>
+        <td>(b)&nbsp;</td>
+      </tr>
+      <tr>
+        <td>a : this is second node in the list starting with b</td>
+        <td>(a b)</td>
+      </tr>
+      <tr>
+        <td>b: second node in the list starting with a (discard since
+it has been
+expanded)</td>
+        <td><br>
+        </td>
+      </tr>
+      <tr>
+        <td>d : next node&nbsp; in the list starting with a</td>
+        <td>(d, a, b)</td>
+      </tr>
+      <tr>
+        <td>e : first&nbsp; in the list starting with d: STOP</td>
+        <td>(e, d, a, b)&nbsp;</td>
+      </tr>
+    </tbody>
+  </table>
+  </p>
+  <p><b>Depth-first may never find the solution</b>: should be avoided
+for
+search trees with large maximum depth. <br>
+To aleviate some of the drawbacks of depth-first we can limit the depth
+to which it is allowed or to increase this depth iteratively. <br>
+&nbsp; </p>
+  <ul>
+    <li>depth-limited: cut-off on the maximum depth allowed; hard to
+come up
+with
+a good depth limit.</li>
+  </ul>
+</ul>
+<ul>
+  <ul>
+    <li>iterative deepening: estimate the diameter of the state space :
+length
+of longest path. Succesively change the depth limit from 0, 1, 2, etc.</li>
+  </ul>
+</ul>
+<ul>
+  <li><big style="color: rgb(102, 51, 255);"><span
+ style="font-weight: bold;">breatdh first</span></big>:&nbsp; the nodes
+at depth <span style="font-weight: bold;">d </span>are expanded
+before any of the
+nodes
+at depth d+1.&nbsp; For the above example, the list of nodes to be
+expanded
+is built by adding the node obtained by the most recent expansion <b>at
+the end of the list.</b></li>
+</ul>
+<table border="1" cols="2" width="100%" nosave="">
+  <tbody>
+    <tr>
+      <td>
+      <center><b>nodes</b></center>
+      </td>
+      <td>
+      <center><b>nodes to be expanded next/partial path</b></center>
+      </td>
+    </tr>
+    <tr>
+      <td>start node b</td>
+      <td>(a c f)&nbsp;&nbsp; (b)</td>
+    </tr>
+    <tr>
+      <td>a : this is second node in the list starting with b</td>
+      <td>(c f )&nbsp; /&nbsp; (a b)&nbsp;</td>
+    </tr>
+    <tr>
+      <td>c: second node in the list starting with a (discard since it
+has been
+expanded)</td>
+      <td>(f )&nbsp; /&nbsp;&nbsp; (a b) (c b)</td>
+    </tr>
+    <tr>
+      <td>d : next node&nbsp; in the list starting with a</td>
+      <td>() / (a b) (c&nbsp; b) (f b)</td>
+    </tr>
+    <tr>
+      <td>&nbsp;b : but discard because of loop</td>
+      <td>(d f)&nbsp;</td>
+    </tr>
+    <tr>
+      <td>d&nbsp;</td>
+      <td>(f)&nbsp; / (c b) (f b) (d a b)</td>
+    </tr>
+    <tr>
+      <td>e</td>
+      <td>(f) / (f b) (d a b) <b>(e c b)</b></td>
+    </tr>
+  </tbody>
+</table>
+<p>Properties of breadth-first search:<br>
+</p>
+<ul style="margin-left: 40px;">
+  <li><span style="color: rgb(255, 0, 0); font-weight: bold;">If there
+is a solution the </span><b
+ style="color: rgb(255, 0, 0); font-weight: bold;">breadth-first is
+guaranteed to find it
+!!</b></li>
+  <li><b style="color: rgb(255, 0, 0); font-weight: bold;">It finds the
+shallowest goal first.</b></li>
+  <li><b style="color: rgb(255, 0, 0); font-weight: bold;">Not good if
+the branching factor is high.</b></li>
+</ul>
+<ul>
+  <li><span style="font-weight: bold; color: rgb(102, 51, 255);">Uniform-cost:</span></li>
+</ul>
+<ul style="margin-left: 40px;">
+  <li>when edges have a cost associated to them, uniform cost expands
+the lowes cost node.</li>
+  <li>It finds the cheapest solution if the cost of the path never
+decreases.</li>
+</ul>
+<ul>
+  <li><span style="font-weight: bold; color: rgb(102, 51, 255);">Bidirectional
+    </span>:&nbsp; combination of depth- with breadth- first. Not easy
+to implement.</li>
+</ul>
+<p><br>
+</p>
+</body>
+</html>

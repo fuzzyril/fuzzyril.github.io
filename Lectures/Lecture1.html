@@ -1,0 +1,840 @@
+
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+
+<html>
+<head>
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=iso-8859-1">
+  <meta name="GENERATOR"
+ content="Mozilla/4.79 [en] (X11; U; SunOS 5.8 sun4u) [Netscape]">
+  <title>Introduction to FRIL/Proglog</title>
+</head>
+<body text="#000000" bgcolor="#ffffff" link="#0000ee" vlink="#551a8b"
+ alink="#ff0000">
+<center>
+<h1><b><font color="#990000">Lecture</font> <font color="#990000">1</font></b></h1>
+</center>
+<b></b>
+<p><br>
+<b><font color="#993399">What is Prolog ?</font></b>
+<br>
+Programming language centered around a small set of basic mechanisms:
+</p>
+<ul>
+  <li>
+pattern matching</li>
+  <li>
+tree-based data structuring</li>
+  <li>
+automatic backtracking</li>
+</ul>
+<b></b>
+<p><br>
+<b><font color="#993399">What is Prolog suitable for ?</font></b>
+</p>
+<ul>
+  <li>
+problem involving (structured) objects and relations between them</li>
+</ul>
+<b></b>
+<p><br>
+ex:
+<br>
+objects in space and spatial relationships between them;
+<br>
+"objects" in a family and family relationships between them
+</p>
+<p><b><font color="#ff0000">In general Prolog developed as a
+programming
+language for Artificial Intelligence (AI).</font></b>
+<br>
+<b></b>&nbsp;<b></b>
+</p>
+<p><b><font color="#993399">Development of Prolog</font></b><b></b>
+</p>
+<p><font color="#3366ff">Pro</font><font color="#ff0000">log</font> =<font
+ color="#3366ff">
+Pro</font>gramming in <font color="#ff0000">Log</font>ic
+</p>
+<p>Main idea&nbsp;(1970s)&nbsp; :&nbsp;use of logic as a programming
+language.<b></b>
+</p>
+<p><b><font color="#993399">Names in logic programming:</font></b>
+</p>
+<ul>
+  <li>
+Robert Kowalski (Edinburgh, later Imperial College, London): theory</li>
+  <li>
+Maarten van Emden (Edinburgh):&nbsp;experimental demonstration</li>
+  <li>
+Alain Colmerauer (Marseille, France): implementation</li>
+  <li>
+David Warren (Edinburgh, Bristol, UK) :&nbsp;efficient implmentation</li>
+</ul>
+<b><font color="#993399">Controversies surrounding Prolog:</font></b>
+<br>
+<b></b>&nbsp;
+<ul>
+  <li>
+First accepted in Europe (because it originated there!)</li>
+  <li>
+Japan: adopted prolog as the programming platform for its Fifth
+Generation
+Computer Project (1985-1995)</li>
+  <li>
+US:&nbsp;Delayed acceptance</li>
+  <ul>
+    <li>
+claims that inefficiency of Microplanner, developed at MIT, transfered
+to prolog)</li>
+    <li>
+competition with the US developed Lisp.</li>
+  </ul>
+  <li>
+Negative reaction from "purists" of logic programming:&nbsp;no features
+unrelated to logic should be added (all working prolog systems have
+such
+features !!!).</li>
+</ul>
+<b><font color="#993399">Declarative versus Procedural languages</font></b><b></b>
+<p>Prolog used declarative (descriptive)&nbsp;view.
+<br>
+<b></b>&nbsp;<b></b>
+</p>
+<p><b><font color="#993399">Prolog Systems/Syntax</font></b><b></b>
+</p>
+<p>Standard Prolog :&nbsp;Edinburgh syntax (Dec-10 syntax)
+<br>
+Microprolog syntax (list based)
+<br>
+<b></b>&nbsp;<b></b>
+</p>
+<p><b><font color="#993399">The prolog system used in this course</font></b>
+</p>
+<ul>
+  <li>
+subset of FRIL (Fuzzy Relational Inference language):</li>
+  <li>
+developed at Bristol University (starting with early 1980s)</li>
+  <li>
+Microprolog syntax</li>
+</ul>
+<b><font color="#993399">FRIL reference material:</font></b>
+<p><a href="../../FRIL_MANUAL/index.html">tutorial manual</a>
+<br>
+<a
+ href="http://www.enm.bris.ac.uk/ai/martin/downloads/FrilResources.html">how
+to download</a>
+<br>
+<a
+ href="http://www.enm.bris.ac.uk/research/aigroup/martin/FrilManual/index.html">reference
+manual</a><b></b>
+</p>
+<p><b>How to enter Fril(in the Unix environment): Type fril</b>
+</p>
+<p>stephan.ececs.uc.edu ~&gt;fril
+</p>
+<p>Fril: Support Logic Programming System &copy; Fril Systems Ltd (c)
+<br>
+1988-97 Version 4.95 Created 22-10-97, 16:14:14
+</p>
+<p>Licensed to University of Cincinnati (SPARC network licence #495e)
+</p>
+<p>Fril&gt; ....here you will be typing your Fril predicates
+<br>
+/*&nbsp; comments&nbsp; */
+<br>
+/*&nbsp;we start with an axample of a program in which we describe
+songs (by their titles) */
+</p>
+<p><b><font color="#3366ff">Fril&gt;((song "I am all shook up"))</font></b>
+</p>
+<p><font color="#cc0000">Fril&gt;?((song X) (p X))</font>
+</p>
+<p>I am all shook up
+</p>
+<p>yes
+</p>
+<p><b><font color="#3333ff">Fril&gt;((song "lady be good"))</font></b>
+</p>
+<p>Fril&gt;<font color="#cc0000">?((song X) (p X))</font>
+</p>
+<p>I am all shook up
+</p>
+<p>yes
+</p>
+<p><font color="#cc0000">Fril&gt;?((song X) (p X)(fail))</font>
+</p>
+<p>I am all shook uplady be good
+</p>
+<p>no
+</p>
+<p>Fril&gt;<font color="#cc0000">?((song X) (p X)(pp)(fail))</font>
+</p>
+<p>I am all shook up
+</p>
+<p>lady be good
+</p>
+<p>Fril&gt;<b><font color="#3333ff">exit 0</font></b>
+</p>
+<p>stephan.ececs.uc.edu ~&gt;
+</p>
+<p>File manipulation:
+</p>
+<p>write your program in a file&nbsp; &lt;filename&gt;.frl
+</p>
+<p>l<b><font color="#3333ff">oad/reload file in fril</font></b>
+</p>
+<p>queries can be included in the file or can then be typed while in
+fril
+</p>
+<p>Communication with the shell: sh "unix command"
+</p>
+<p>example:
+</p>
+<p><b>Fril: Support Logic Programming System &copy; Fril Systems Ltd
+(c)
+1988-97</b>
+</p>
+<p><b>Version 4.95 Created 22-10-97, 16:14:14</b>
+</p>
+<p><b>Licensed to University of Cincinnati (SPARC network licence #495e)</b>
+</p>
+<p>Fril&gt;<b><font color="#3333ff">sh "emacs <a href="example1.frl">example1.frl</a>"</font></b>
+</p>
+<p>yes
+</p>
+<p>Fril&gt;<b><font color="#3333ff">list all</font></b>
+</p>
+<p>yes
+</p>
+<p>Fril&gt;<b><font color="#3333ff">reload example1.frl</font></b>
+</p>
+<p>yes
+</p>
+<p>Fril&gt;<b><font color="#3333ff">list all</font></b>
+</p>
+<p>((spouse _68 _69)
+</p>
+<p>(married _68 _69))
+</p>
+<p>((spouse _68 _69)
+</p>
+<p>(married _69 _68))
+</p>
+<p>((married John Jill))
+</p>
+<p>((married Bob Mary))
+</p>
+<p>((female Jill))
+</p>
+<p>((female Mary))
+</p>
+<p>((male John))
+</p>
+<p>((male Bob))
+</p>
+<p>yes
+</p>
+<p>Fril&gt;
+</p>
+<p>Fril&gt;<b><font color="#3333ff">sh "more example1.frl"</font></b>
+</p>
+<p>/* <i>((male X)) holds if/when X is a male </i>*/
+</p>
+<p>((male John))
+</p>
+<p>((male Bob))
+</p>
+<p>/* <i>((female X)) holds if/when X is a female </i>*/
+</p>
+<p>((female Jill))
+</p>
+<p>((female Mary))
+</p>
+<p>/* <i>((married X Y)) holds if/when X is married to Y
+</i>*/
+</p>
+<p>/* <i>NOTE: married IS NOT symmetric </i>*/
+</p>
+<p>((married John Jill))
+</p>
+<p>((married Bob Mary))
+</p>
+<p>/* <i>((spouse X Y)) holds if/when X is married to Y OR Y is
+married
+to X </i>*/
+</p>
+<p>/* <i>NOTE: spouse IS symmetric </i>*/
+</p>
+<p>((spouse X Y)(married X Y))
+</p>
+<p>((spouse X Y)(married Y X))
+</p>
+<p>queries:
+</p>
+<p>Fril&gt;<font color="#cc0000">qh((male John))</font>
+</p>
+<p>((male John))
+</p>
+<p>no(more) solutions
+</p>
+<p>yes
+</p>
+<p>Fril&gt;<font color="#cc0000">qh((married John X))</font>
+</p>
+<p>((married John Jill))
+</p>
+<p>no(more) solutions
+</p>
+<p>yes
+</p>
+<p>Fril&gt;<font color="#cc0000">qh((male X))</font>
+</p>
+<p>((male John))
+</p>
+<p>((male Bob))
+</p>
+<p>no(more) solutions
+</p>
+<p>yes
+</p>
+<p>Fril&gt;<font color="#cc0000">qh((female X))</font>
+</p>
+<p>((female Jill))
+</p>
+<p>((female Mary))
+</p>
+<p>no(more) solutions
+</p>
+<p>yes
+</p>
+<p>Fril&gt;<font color="#cc0000">qh((married X Y))</font>
+</p>
+<p>((married John Jill))
+</p>
+<p>((married Bob Mary))
+</p>
+<p>no(more) solutions
+</p>
+<p>yes
+</p>
+<p>Fril&gt;
+</p>
+<p>Fril&gt;<font color="#cc0000">qh((married Mary X))</font>
+</p>
+<p>no(more) solutions
+</p>
+<p>yes
+</p>
+<p>Fril&gt;<font color="#cc0000">qh((spouse X Y))</font>
+</p>
+<p>((spouse John Jill))
+</p>
+<p>((spouse Bob Mary))
+</p>
+<p>((spouse Jill John))
+</p>
+<p>((spouse Mary Bob))
+</p>
+<p>no(more) solutions
+</p>
+<p>yes
+</p>
+<p>Fril&gt;
+</p>
+<p>Fril&gt;<font color="#cc0000">qh((spouse Mary X))</font>
+</p>
+<p>((spouse Mary Bob))
+</p>
+<p>no(more) solutions
+</p>
+<p>yes A new example:
+</p>
+<p>Fril&gt;<b><font color="#3333ff">sh "emacs <a href="example2.frl">example2.frl</a>"</font></b>
+</p>
+<p>yes
+</p>
+<p>Fril&gt;<b><font color="#3333ff">sh "more example2.frl"</font></b>
+</p>
+<p>/* <i>((likes X Y)) if/when X likes Y; NOT symmetric </i>*/
+</p>
+<p>((likes John Jill))
+</p>
+<p>((likes John Mary))
+</p>
+<p>((likes Bob Jill))
+</p>
+<p>((likes Bob Mary))
+</p>
+<p>/* <i>((friends X Y)) holds when X likes Y AND Y likes X </i>*/
+</p>
+<p>((friends X Y) (likes X Y) (likes Y X))
+</p>
+<p><b>What predicates are known to the system?</b>
+</p>
+<p>/* <i>dict is a bip - its name comes from dictionary </i>*/
+</p>
+<p>Fril&gt;<font color="#cc0000">qh((dict X))</font>
+</p>
+<p>((dict spouse))
+</p>
+<p>((dict married))
+</p>
+<p>((dict female))
+</p>
+<p>((dict male))
+</p>
+<p>no(more) solutions
+</p>
+<p>yes
+</p>
+<p>Fril&gt;<b><font color="#3333ff">reload example2.frl</font></b>
+</p>
+<p>yes
+</p>
+<p>Fril&gt;<font color="#cc0000">qh((dict X))</font>
+</p>
+<p>((dict friends))
+</p>
+<p>((dict likes))
+</p>
+<p>((dict $pause_count)) system predicate
+</p>
+<p>((dict spouse))
+</p>
+<p>((dict married))
+</p>
+<p>((dict female))
+</p>
+<p>((dict male))
+</p>
+<p>no(more) solutions
+</p>
+<p>yes
+</p>
+<p>Fril&gt;<b><font color="#3333ff">list all</font></b>
+</p>
+<p>((friends _68 _69) (likes _68 _69) (likes _69 _68))
+</p>
+<p>((likes John Jill))
+</p>
+<p>((likes John Mary))
+</p>
+<p>((likes Bob Jill))
+</p>
+<p>((likes Bob Mary))
+</p>
+<p>((spouse _68 _69) (married _68 _69))
+</p>
+<p>((spouse _68 _69) (married _69 _68))
+</p>
+<p>((married John Jill))
+</p>
+<p>((married Bob Mary))
+</p>
+<p>((female Jill))
+</p>
+<p>((female Mary))
+</p>
+<p>Pausing - press&nbsp; to continue, or press q to quit
+</p>
+<p>((male John))
+</p>
+<p>((male Bob))
+</p>
+<p>yes
+</p>
+<p>yes
+</p>
+<p>Fril&gt;<font color="#cc0000">qh((friends X Y))</font>
+</p>
+<p>no(more) solutions
+</p>
+<p>yes
+</p>
+<p>Fril&gt;<b><font color="#3333ff">sh "emacs example2.frl"</font></b>
+</p>
+<p>yes
+</p>
+<p>Fril&gt;<b><font color="#3333ff">reload example2.frl</font></b>
+</p>
+<p>yes
+</p>
+<p>Fril&gt;<font color="#cc0000">qh((friends X Y))</font>
+</p>
+<p>((friends George Jill))
+</p>
+<p>((friends Jill George))
+</p>
+<p>no(more) solutions
+</p>
+<p>yes
+</p>
+<p>&nbsp;<b><u>Erasing the knowledge base</u></b>
+</p>
+<p>Fril&gt;<font color="#cc0000">qh((dict X)(<b>kill</b> X))</font>
+</p>
+<p>((dict friends) (kill friends))
+</p>
+<p>((dict likes) (kill likes))
+</p>
+<p>((dict $pause_count) (kill $pause_count))
+</p>
+<p>((dict spouse) (kill spouse))
+</p>
+<p>((dict married) (kill married))
+</p>
+<p>((dict female) (kill female))
+</p>
+<p>((dict male) (kill male))
+</p>
+<p>no(more) solutions
+</p>
+<p>yes
+</p>
+<p>Fril&gt;<b><font color="#3333ff">list all</font></b>
+</p>
+<p>yes
+</p>
+<center>
+<p><b>Other types of queries</b></p>
+</center>
+<p><b>oh : only one solution at a time</b>
+</p>
+<p>Fril&gt;<b><font color="#cc0000">oh((friends X Y))</font></b>
+</p>
+<p>((friends George Jill))
+</p>
+<p>next? (y/n) y
+</p>
+<p>((friends Jill George))
+</p>
+<p>next? (y/n) y
+</p>
+<p>no(more) solutions
+</p>
+<p>yes
+</p>
+<p><b>wh : which solution</b>
+</p>
+<p>Fril&gt;<font color="#cc0000">wh((X Z) (likes X Y)(likes Y Z))</font>
+</p>
+<p>(John George) (Bob George) (George George) (Jill Jill)
+</p>
+<p>no(more) solutions
+</p>
+<p>yes
+</p>
+<p>Fril&gt; Family relation example:
+</p>
+<p>Fril&gt;<b><font color="#3333ff">sh "emacs family_relations.frl"</font></b>
+</p>
+<p>Fril&gt;<b><font color="#3333ff">list all</font></b>
+</p>
+<p>yes
+</p>
+<p>Fril&gt;<b><font color="#3333ff">sh "more family_relations.frl"</font></b>
+</p>
+<p>/* <i>((mother X Y)) holds if/when X is mother of Y </i>*/
+</p>
+<p>((mother Jane Mary))
+</p>
+<p>((mother Jane Bill))
+</p>
+<p>((mother Jane Trevor))
+</p>
+<p>((mother Jane Ann))
+</p>
+<p>((mother Julie Jane))
+</p>
+<p>((mother Monique Tom))
+</p>
+<p>/* <i>((father X Y)) holds if/when X is the father of Y </i>*/
+</p>
+<p>((father Tom Mary))
+</p>
+<p>((father Tom Bill))
+</p>
+<p>((father Tom Trevor))
+</p>
+<p>((father Tom Ann))
+</p>
+<p>/* <i>((parents X M F)) holds is/when M is the mother and F is the
+father
+of X </i>*/
+</p>
+<p>((parents Monique Silvia Bill))
+</p>
+<p>((parents X M F) (mother M X) (father F X))
+</p>
+<p>/* <i>((siblings X Y)) holds if X and Yhave the same parents
+</i>*/
+</p>
+<p>((siblings X Y) (parents X M F) (parents Y M F))
+</p>
+<p>/* <i>((grandmother G X)) holds if G is maternal grandmother:
+mother
+of mother </i>*/
+</p>
+<p>/* <i>of X; of paternal grandmother: mother of father of X </i>*/
+</p>
+<p>((grandmother G X)(mother G Y )(mother Y X))
+</p>
+<p>((grandmother G X)(mother G Y)(father Y X))
+</p>
+<p>/* <i>((grandmother2 G X)) same as grandmother but using parents
+predicate
+</i>*/
+</p>
+<p>((grandmother2 G X)(parents X M _)(mother G M))
+</p>
+<p>((grandmother2 G X)(parents X _ F)(mother G F))
+</p>
+<p>/* <i>((ancestor A X)) holds if A is an ancestor of X, that is a
+parent
+</i>*/
+</p>
+<p>/* <i>or an ancestor of a parent. </i>*/
+</p>
+<p>((ancestor A X)(parents X A _))
+</p>
+<p>((ancestor A X)(parents X _ A))
+</p>
+<p>((ancestor A X)(parents X A1 _)(ancestor A A1))
+</p>
+<p>((ancestor A X)(parents X _ A1)(ancestor A A1))
+</p>
+<p>Fril&gt;<b><font color="#3333ff">reload <a
+ href="family_relations.frl">family_relations.frl</a></font></b>
+</p>
+<p>Fril&gt;<b><font color="#3333ff">list all</font></b>
+</p>
+<p>((ancestor _68 _69) (parents _69 _68 _6f))
+</p>
+<p>((ancestor _68 _69) (parents _69 _6f _68))
+</p>
+<p>((ancestor _68 _69) (parents _69 _6f _70) (ancestor _68 _6f))
+</p>
+<p>((ancestor _68 _69) (parents _69 _6f _70) (ancestor _68 _70))
+</p>
+<p>((grandmother2 _68 _69) (parents _69 _6f _70) (mother _68 _6f))
+</p>
+<p>((grandmother2 _68 _69) (parents _69 _6f _70) (mother _68 _70))
+</p>
+<p>((grandmother _68 _69) (mother _68 _6f) (mother _6f _69))
+</p>
+<p>((grandmother _68 _69) (mother _68 _6f)
+</p>
+<p>Pausing - press&nbsp; space to continue, or press q to quit
+</p>
+<p>((siblings _68 _69) (parents _68 _6f _70) (parents _69 _6f _70))
+</p>
+<p>((parents Monique Silvia Bill))
+</p>
+<p>((parents _69 _6a _6b) (mother _6a _69) (father _6b _69))
+</p>
+<p>((father Tom Mary))
+</p>
+<p>((father Tom Bill))
+</p>
+<p>((father Tom Trevor))
+</p>
+<p>((father Tom Ann))
+</p>
+<p>((mother Jane Mary))
+</p>
+<p>((mother Jane Bill))
+</p>
+<p>((mother Jane Trevor))
+</p>
+<p>((mother Jane Ann))
+</p>
+<p>((mother Julie Jane))
+</p>
+<p>((mother Monique Tom))
+</p>
+<p>yes
+</p>
+<p>Fril&gt; Queries:
+</p>
+<p>Fril&gt;<font color="#cc0000">qh((mother Jane X))</font>
+</p>
+<p>((mother Jane Mary))
+</p>
+<p>((mother Jane Bill))
+</p>
+<p>((mother Jane Trevor))
+</p>
+<p>((mother Jane Ann))
+</p>
+<p>no(more) solutions
+</p>
+<p>yes
+</p>
+<p>Fril&gt;<font color="#cc0000">qh((parents Mary M F))</font>
+</p>
+<p>((parents Mary Jane Tom))
+</p>
+<p>no(more) solutions
+</p>
+<p>yes
+</p>
+<p>Fril&gt;<font color="#cc0000">qh((ancestor A X))</font>
+</p>
+<p>((ancestor Silvia Monique))
+</p>
+<p>((ancestor Jane Mary))
+</p>
+<p>((ancestor Jane Bill))
+</p>
+<p>((ancestor Jane Trevor))
+</p>
+<p>((ancestor Jane Ann))
+</p>
+<p>((ancestor Bill Monique))
+</p>
+<p>((ancestor Tom Mary))
+</p>
+<p>((ancestor Tom Bill))
+</p>
+<p>((ancestor Tom Trevor))
+</p>
+<p>((ancestor Tom Ann))
+</p>
+<p>((ancestor Jane Monique))
+</p>
+<p>((ancestor Tom Monique))
+</p>
+<p>no(more) solutions
+</p>
+<p>yes
+</p>
+<p>Fril&gt;<font color="#cc0000">qh((grandmother G X))</font>
+</p>
+<p>((grandmother Julie Mary))
+</p>
+<p>((grandmother Julie Bill))
+</p>
+<p>((grandmother Julie Trevor))
+</p>
+<p>((grandmother Julie Ann))
+</p>
+<p>((grandmother Monique Mary))
+</p>
+<p>((grandmother Monique Bill))
+</p>
+<p>((grandmother Monique Trevor))
+</p>
+<p>((grandmother Monique Ann))
+</p>
+<p>no(more) solutions
+</p>
+<p>yes
+</p>
+<p>Fril&gt;
+</p>
+<p>Fril&gt;<font color="#cc0000">qh((siblings X Y))</font>
+</p>
+<p>((siblings Monique Monique))
+</p>
+<p>((siblings Mary Mary))
+</p>
+<p>((siblings Mary Bill))
+</p>
+<p>((siblings Mary Trevor))
+</p>
+<p>((siblings Mary Ann))
+</p>
+<p>((siblings Bill Mary))
+</p>
+<p>((siblings Bill Bill))
+</p>
+<p>((siblings Bill Trevor))
+</p>
+<p>((siblings Bill Ann))
+</p>
+<p>((siblings Trevor Mary))
+</p>
+<p>((siblings Trevor Bill))
+</p>
+<p>((siblings Trevor Trevor))
+</p>
+<p>((siblings Trevor Ann))
+</p>
+<p>((siblings Ann Mary))
+</p>
+<p>((siblings Ann Bill))
+</p>
+<p>((siblings Ann Trevor))
+</p>
+<p>((siblings Ann Ann))
+</p>
+<p>no(more) solutions
+</p>
+<p>yes
+</p>
+<p><b>Note the bad behavior of siblings!!!!!!!!!!!</b>
+<br>
+<b>Let's fix this!</b>
+<br>
+<b>Redefine siblings:</b>
+</p>
+<p>/* <i>((siblings X Y)) holds if X and Yhave the same parents
+</i>*/
+</p>
+<p><b><font color="#3333ff">((siblings X Y) (parents X M F) (parents Y
+M F) (negg eq X Y))</font></b>
+</p>
+<p>Now the query:
+</p>
+<p>Fril&gt;<font color="#cc0000">qh((siblings X Y))</font>
+</p>
+<p>((siblings Mary Bill))
+</p>
+<p>((siblings Mary Trevor))
+</p>
+<p>((siblings Mary Ann))
+</p>
+<p>((siblings Bill Mary))
+</p>
+<p>((siblings Bill Trevor))
+</p>
+<p>((siblings Bill Ann))
+</p>
+<p>((siblings Trevor Mary))
+</p>
+<p>((siblings Trevor Bill))
+</p>
+<p>((siblings Trevor Ann))
+</p>
+<p>((siblings Ann Mary))
+</p>
+<p>((siblings Ann Bill))
+</p>
+<p>((siblings Ann Trevor))
+</p>
+<p>no(more) solutions
+<br>
+yes
+</p>
+<p><b>negg, neg </b>are&nbsp; <b>bip</b>s: negg has arity 3; neg has
+arity
+1:
+</p>
+<p>Fril&gt;<font color="#cc0000">?((negg eq 2 3))</font>
+<br>
+yes
+</p>
+<p>Fril&gt;<font color="#cc0000">?((neg (eq 2 3)))</font>
+<br>
+yes
+</p>
+<p><b>eq</b> is also a <b>bip:</b>
+<br>
+((eq X X)) always holds; otherwise it fails; can be used to implement
+assignment or comparison.
+</p>
+</body>
+</html>
+
